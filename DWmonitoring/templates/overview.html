@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Overview {% endblock title %}
+{% block header %}
+<header class="shadow-md py-2 px-4 flex justify-between items-center z-50">
+    <a href="{% url 'overview'%}" class="text-xl font-extrabold text-gray-700">
+        <span class="flex items-center gap-2 "> <img class="text-gray-300" src="/static/images/overview1.svg"
+                height="22" width="22" alt="overview"> Overview </span>
+    </a>
+    <div class="relative flex gap-4 px-4">
+
+        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon">
+        <button
+            class="hidden md:block border-2 border-gray-400 bg-gray-100 rounded-full p-2 {% if request.path == '/profile' %} border-red-600 {% endif %}"
+            onclick="toggleDropdown('profileDropdown')">
+            <img height="20" width="20" src="https://img.icons8.com/?size=100&id=fJ7hcfUGpKG7&format=png&color=000000"
+                alt="profile " />
+        </button>
+        <div id="profileDropdown"
+            class="hidden absolute right-0 mt-14 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1">
+            <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+            <button onclick="showPopUp()"
+                class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</button>
+        </div>
+        <!-- menu for mobile view -->
+        <div class="md:hidden block  bg-gray-100 rounded-full p-2  z-50">
+            <input id="checkbox2" type="checkbox" class="hidden">
+            <label class="toggle toggle2" for="checkbox2" onclick="toggleSidebar()">
+                <div id="bar4" class="bars"></div>
+                <div id="bar5" class="bars"></div>
+                <div id="bar6" class="bars"></div>
+            </label>
+        </div>
+    </div>
+</header>
+{% endblock header %}
+{% block content %}
+
+<div class="mt-4">
+    <p class="text-gray-600 px-2 w-full md:w-4/5 mx-auto text-center">Welcome to your Security Overview. Here, you'll
+        find top recent alerts about data breaches and a graph showing your organization's threat levels, keeping you
+        informed and protected.
+    </p>
+    <div class="p-4 flex gap-4  w-4/5 mx-auto flex-col md:flex-row ">
+        <!-- gauge chart -->
+        <div class="shadow-md flex flex-col items-center justify-center rounded-lg  w-fit h-fit lg:w-[370px] border mx-auto border-red-300 bg-white lg:h-[440px]">
+            <h1 class="font-semibold text-sm text-gray-600 py-2"> Org. Health status </h1>
+            <div id="gauge-chart" class="w-[330px] h-[300px] md:h-[300px]"></div>
+        </div>
+        <div
+            class="xl:w-4/5 text-gray-600 w-full border-2 flex flex-col items-center justify-center  shadow-lg border-red-200 p-4 rounded-lg bg-white">
+            <h2 class="text-lg font-semibold mb-4"> Breach count in 2023 </h2>
+            <div class="w-full h-full rounded-lg shadow">
+                <h3 class="text font-semibold mb-2">Breach Dates Over Time</h3>
+                <canvas id="breachDateChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-2 p-4  flex gap-4  flex-col xl:flex-row w-full">
+        <div class="flex flex-col md:flex-row justify-center mx-auto items-center gap-4 w-4/5 ">
+            <div class="md:w-1/2 w-full p-6  bg-white rounded-lg border-2 border-red-200 flex flex-col gap-2">
+                <h3 class="text-lg font-bold mb-2">Key Metrics</h3>
+                <div class="w-4/5 flex flex-col justify-center  gap-2">
+                    <div
+                        class="border-2 border-gray-300 p-2 shadow rounded-md font-semibold flex justify-between px-4  text-gray-500 ">
+                        Recent alerts <span class="font-bold  text-red-600 ">123</span></div>
+                    <div
+                        class="border-2 border-gray-300 p-2 shadow rounded-md font-semibold text-gray-500 flex justify-between px-4 ">
+                        Domain Leaks <span class="font-bold  text-red-600 ">32</span></div>
+                    <div
+                        class="border-2 border-gray-300 p-2 shadow rounded-md font-semibold text-gray-500 flex justify-between px-4 ">
+                        Financial card leaks <span class="font-bold  text-red-600 ">4</span></div>
+                    <div
+                        class="border-2 border-gray-300 p-2 shadow rounded-md font-semibold text-gray-500 flex justify-between px-4 ">
+                        PII leaks <span class="font-bold  text-red-600 ">65</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 md:w-1/2 w-full bg-white rounded-lg border-2 border-red-200 shadow">
+                <h3 class="text-lg font-bold mb-2">Top Data Breach Sources</h3>
+                <canvas id="vulnerabilityCategoriesChart"></canvas>
+            </div>
+        </div> 
+    </div>
+
+
+</div>
+
+<script>
+    function parseSafe(jsonString) {
+        try {
+            return JSON.parse(jsonString);
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            return {};
+        }
+    }
+    const health_score = parseSafe('{{ health_score | escapejs }}')
+    var myChart = echarts.init(document.getElementById('gauge-chart'));
+    console.log("helath status scroe : ", health_score)
+    var option = {
+        series: [{
+            type: 'gauge',
+            detail: {
+                show: true,
+                formatter: '{value}%',
+                fontSize: 20,
+                color: '#000'
+            },
+            data: [{ value: health_score, name: 'Health Status' }],
+            startAngle: 180,
+            endAngle: 0,
+            axisLine: {
+                lineStyle: {
+                    width: 20,
+                    color: [[0.2, '#f22424'], [0.7, '#d0e864'], [1, '#71E77D']]
+                }
+            },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            pointer: {
+                length: '70%',
+                width: 8,
+                color: 'auto'
+            }
+        }],
+        graphic: [
+            {
+                type: 'text',
+                left: '7%',
+                top: '30%',
+                style: {
+                    text: 'Poor',
+                    fill: '#f22424',
+                    font: 'bold 14px sans-serif'
+                }
+            },
+            {
+                type: 'text',
+                left: '45%',
+                top: '8%',
+                style: {
+                    text: 'Normal',
+                    fill: '#d0e864',
+                    font: 'bold 14px sans-serif'
+                }
+            },
+            {
+                type: 'text',
+                left: '85%',
+                top: '30%',
+                style: {
+                    text: 'Good',
+                    fill: '#71E77D',
+                    font: 'bold 14px sans-serif'
+                }
+            }
+        ]
+    };
+
+    myChart.setOption(option);
+
+
+    // var ctx = document.getElementById('trendChart').getContext('2d');
+    // var trendChart = new Chart(ctx, {
+    //     type: 'line',
+    //     data: {
+    //         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Sept', 'Oct', 'Nov', 'Dec'],
+    //         datasets: [{
+    //             label: 'Threats Detected',
+    //             data: [12, 19, 3, 5, 2, 3, 7, 6, 8, 13, 21, 7],
+    //             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+    //             borderColor: 'rgba(75, 192, 192, 1)',
+    //             borderWidth: 1,
+    //         }]
+    //     },
+    //     options: {
+    //         fill: true,
+    //         scales: {
+    //             y: {
+    //                 beginAtZero: true
+    //             }
+    //         }
+    //     }
+    // });
+
+    // Top Vulnerability Categories
+
+
+    var ctx3 = document.getElementById('vulnerabilityCategoriesChart').getContext('2d');
+    var vulnerabilityCategoriesChart = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+            labels: ['stolen credentials.', 'Malware', 'Social engineering', 'Ransomware', 'DNS attacks'],
+            datasets: [{
+                label: 'breaches',
+                data: [7, 12, 5, 10, 8],
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            label: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+
+
+    var ctx10 = document.getElementById('breachDateChart').getContext('2d');
+    var breachDateChart = new Chart(ctx10, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [{
+                label: 'Domains Breached',
+                data: [1, 2, 1, 5, 9, 2, 4, 7, 3, 6, 8, 5],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+            }, {
+                label: 'Cards Breached',
+                data: [3, 4, 3, 6, 8, 5, 2, 9, 7, 4, 6, 3],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                fill: false,
+            }, {
+                label: 'PII Breached',
+                data: [2, 3, 1, 4, 5, 2, 6, 3, 8, 5, 4, 7],
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 2,
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock content %}
