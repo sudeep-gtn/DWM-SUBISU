@@ -21,6 +21,7 @@
         }
         .table-container {
             width: 100%;
+            
             border-collapse: collapse;
             display: block;
             
@@ -74,7 +75,7 @@
 <body>
     <header style="display: flex; justify-content: space-between;">
         <div style="font-weight: 700; font-size: 26px;"> Dark Web Monitoring Report </div>
-        <div> <img src="https://i0.wp.com/gtn.com.np/storage/2022/08/greentick_img.png?fit=2332%2C769&ssl=1" width="140" height="140" alt="logo"></div>
+        <div> <img src="https://i0.wp.com/gtn.com.np/storage/2022/08/greentick_img.png?fit=2332%2C769&ssl=1" width="140" alt="logo"></div>
     </header>
 
 
@@ -85,7 +86,7 @@
             <div class="breach-count">Total Domain breaches : <span>{{ domains |length }}</span> </div>
         </div>
     </div>
-    <div style="padding: 0 10px;">
+    <div>
         <table class="table-container">
             <thead class="table-header">
                 <tr class="table-header-row">

@@ -78,7 +78,7 @@
         </div>
         <div
             class='xl:w-[700px] w-fit border-2 flex flex-col items-center justify-center  shadow-lg border-red-200 p-4 rounded-lg bg-white'>
-            <h1 class="font-semibold py-2 text-sm text-gray-600 w-fit "> Breach Counts by Type and Severity Level </h1>
+            <h1 class="font-semibold py-2 text-sm text-gray-600 w-fit "> Total Logs and Breaches  </h1>
             <div class="chart-container w-full">
                 <canvas id="breachCountChart"></canvas>
             </div>
@@ -173,7 +173,7 @@
     };
 
     const breachCountData = {
-        labels: ['Cards', 'Domains', 'PII'],
+        labels: ['stealer logs', 'Domains', 'PII'],
         datasets: [{
             backgroundColor: '#f0560a',
             borderColor: '#bd2a17',

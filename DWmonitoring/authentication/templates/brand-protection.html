@@ -61,16 +61,16 @@
 {% block content %}
 <div>
     <div class="container mx-auto p-4 z-20">
-        <h1 class="text-4xl font-bold mb-6 text-center">Brand Protection Dashboard</h1>
+        <div class="text-2xl font-extrabold mb-6 text-center"><span class="text-pink-700">Brand Monitoring</span> Dashboard</div>
 
         <div class="flex flex-wrap -mx-2">
             <!-- Brand Mentions Monitoring -->
             <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
                 <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
                     <h2 class="text-lg text-gray-800 font-semibold mb-2">Brand Mentions</h2>
-                    <div class="mb-4">
-                        <p class="">Total Mentions: <span class="font-bold">1,234</span></p>
-                        <p class="">Negative Mentions: <span class="font-bold text-red-500">123</span></p>
+                    <div class="mb-2 flex flex-col gap-3">
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">1,234 </span> Total Mentions </div>
+                        <div class="border-2 border-gray-300 rounded w-full px-4 shadow-md py-1 ">  <span class="font-extrabold text-red-500">123</span> Negative Mentions</div>
                     </div>
                     <svg id="iconBrandMentions" class="toggle-icon absolute top-6 right-6 cursor-pointer"
                         onclick="toggleDetails('brandMentions', 'iconBrandMentions')" xmlns="http://www.w3.org/2000/svg"
@@ -87,9 +87,9 @@
             <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
                 <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
                     <h2 class="text-lg text-gray-800 font-semibold mb-2">Online Reputation</h2>
-                    <div class="mb-4">
-                        <p class="">Listings Detected: <span class="font-bold">56</span></p>
-                        <!-- <p class=""> Actions Taken: <span class="font-bold">50</span></p> -->
+                    <div class="mb-2">
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">34 </span> Listings Detected </div>
+                        
                     </div>
                     <svg id="iconCounterfeitDetection" class="toggle-icon absolute top-6 right-6 cursor-pointer"
                         onclick="toggleDetails('counterfeitDetection', 'iconCounterfeitDetection')"
@@ -119,8 +119,8 @@
                 <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
                     <h2 class="text-lg text-gray-800 font-semibold mb-2"> Social Media </h2>
                     <div class="mb-4">
-                        <p class="">Listings detected: <span class="font-bold">12</span></p>
-                        <!-- <p class="text-lg">Databases Leaked: <span class="font-bold">3</span></p> -->
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">14 </span> Listings detected </div>
+                       
                     </div>
                     <svg id="iconDataLeaks" class="toggle-icon absolute top-6 right-6 cursor-pointer"
                         onclick="toggleDetails('dataLeaks', 'iconDataLeaks')" xmlns="http://www.w3.org/2000/svg"
@@ -139,9 +139,10 @@
             <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
                 <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
                     <h2 class="text-lg text-gray-800 font-semibold mb-2">Copyright/Trademark</h2>
-                    <div class="mb-4">
-                        <p class=""> Listings detected : <span class="font-bold">8</span></p>
-                        <p class="">Actions Taken: <span class="font-bold">8</span></p>
+                    <div class="mb-2 flex flex-col gap-2 ">
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">1675 </span> listings detected </div>
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">234 </span> actions Taken </div>
+
                     </div>
                     <svg id="iconIPProtection" class="toggle-icon absolute top-6 right-6 cursor-pointer"
                         onclick="toggleDetails('ipProtection', 'iconIPProtection')" xmlns="http://www.w3.org/2000/svg"
@@ -160,9 +161,9 @@
             <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
                 <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
                     <h2 class="text-lg text-gray-800 font-semibold mb-2">Phishing/Scam</h2>
-                    <div class="mb-4">
-                        <p class=""> Phishing detected: <span class="font-bold">2</span></p>
-                        <p class=""> Actions Taken: <span class="font-bold">2</span></p>
+                    <div class="mb-2 flex flex-col gap-3">
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">75 </span> listings detected </div>
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span class="font-extrabold">34 </span> actions Taken </div>
                     </div>
                     <svg id="iconExecutiveProtection" class="toggle-icon absolute top-6 right-6 cursor-pointer"
                         onclick="toggleDetails('executiveProtection', 'iconExecutiveProtection')"

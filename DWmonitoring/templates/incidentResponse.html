@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %} Incident Response {% endblock title %}
-
-{% block header %}
+{% extends 'base.html' %} {% load static %} {% block title %} Incident Response
+{% endblock title %} {% block header %}
 <header class="shadow-md py-2 px-4 flex justify-between items-center z-50">
     <a href="{% url 'incident-response'%}" class="text-xl font-extrabold text-gray-700">
         <div class="flex gap-2">
@@ -20,12 +16,12 @@
                         </path>
                     </g>
                 </svg></span>
-            <span class="text-gray-800">Incident</span> <span class="text-red-500">Response
-            </span>
+            <span class="text-gray-800">Incident</span>
+            <span class="text-red-500">Response </span>
         </div>
     </a>
     <div class="relative flex gap-4 px-4">
-        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon">
+        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon" />
         <button
             class="hidden md:block border-2 border-gray-400 bg-gray-100 rounded-full p-2 {% if request.path == '/profile' %} border-red-600 {% endif %}"
             onclick="toggleDropdown('profileDropdown')">
@@ -35,11 +31,12 @@
         <div id="profileDropdown"
             class="hidden absolute right-0 mt-14 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1">
             <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
-            <button onclick="showPopUp()"
-                class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</button>
+            <button onclick="showPopUp()" class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                Logout
+            </button>
         </div>
-        <div class="md:hidden block  bg-gray-100 rounded-full p-2  z-50">
-            <input id="checkbox2" type="checkbox" class="hidden">
+        <div class="md:hidden block bg-gray-100 rounded-full p-2 z-50">
+            <input id="checkbox2" type="checkbox" class="hidden" />
             <label class="toggle toggle2" for="checkbox2" onclick="toggleSidebar()">
                 <div id="bar4" class="bars"></div>
                 <div id="bar5" class="bars"></div>
@@ -48,19 +45,19 @@
         </div>
     </div>
 </header>
-{% endblock header %}
-
-{% block content %}
+{% endblock header %} {% block content %}
 <div class="container mx-auto">
     <section id="raise-ticket" class="rounded-lg p-6">
         {% if user %}
         <div class="flex items-center justify-between mb-8 bg-white p-4">
             <div class="w-2/3 text-gray-600 font-semibold">
-                If you encounter any suspicious activities or potential threats, please raise a ticket. Our team
-                will review and address it promptly.
+                If you encounter any suspicious activities or potential threats, please
+                raise a ticket. Our team will review and address it promptly.
             </div>
-            <button onclick="showForm()" class="bg-gray-200 border-2 border-gray-400  text-gray-800 font-semibold py-2 px-4 rounded">Raise
-                Ticket</button>
+            <button onclick="showForm()"
+                class="bg-gray-100 border-2 hover:bg-gray-300 transition-all duration-200 ease-in-out border-red-300 text-gray-800 font-semibold py-2 px-4 rounded">
+                Raise Ticket
+            </button>
         </div>
 
         <div id="backgroundMask" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
@@ -73,7 +70,7 @@
                         <label for="ticket_title" class="block text-sm font-medium text-gray-700">Ticket Title</label>
                         <input type="text" id="ticket_title" name="ticket_title"
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            required>
+                            required />
                     </div>
                     <div>
                         <label for="ticket_description"
@@ -85,14 +82,17 @@
                     <div>
                         <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
                         <input type="file" id="image" name="image"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                     </div>
                     <div class="flex justify-end">
                         <button type="button" onclick="hideForm()"
-                            class="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-gray-600">Cancel</button>
+                            class="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-gray-600">
+                            Cancel
+                        </button>
                         <button type="submit"
-                            class="inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Raise
-                            Ticket</button>
+                            class="inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                            Raise Ticket
+                        </button>
                     </div>
                 </form>
             </div>
@@ -105,22 +105,26 @@
                 {% for ticket in tickets %}
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="p-4">
-                        <h3 class="text-lg font-medium text-gray-900">{{ ticket.ticket_title }}</h3>
+                        <h3 class="text-lg font-medium text-gray-900">
+                            {{ ticket.ticket_title }}
+                        </h3>
                         <p class="text-gray-500 mb-3">{{ ticket.ticket_description }}</p>
                         {% if ticket.image %}
-                        <div class="max-w-[200px] ">
-                            <span class="text-gray-600 ">Attachments</span>
+                        <div class="max-w-[200px]">
+                            <span class="text-gray-600">Attachments</span>
                             <div>
                                 <img src="{{ ticket.image.url }}" alt="Ticket Image"
-                                    class="rounded-md w-full h-auto object-cover">
+                                    class="rounded-md w-full h-auto object-cover" />
                                 <a target="_blank"
-                                    class=" border-2 rounded-lg flex gap-2 mt-1 items-center w-fit bg-gray-100 border-gray-400 px-2 "
-                                    href="{{ ticket.image.url }}"> <img src="/static/images/redirect.png" width="12"
-                                        height="12" alt=""> View image </a>
+                                    class="border-2 rounded-lg flex gap-2 mt-1 items-center w-fit bg-gray-100 border-gray-400 px-2"
+                                    href="{{ ticket.image.url }}">
+                                    <img src="/static/images/redirect.png" width="12" height="12" alt="" />
+                                    View image
+                                </a>
                             </div>
                         </div>
                         {% endif %}
-                        <div class="mt-4 ">
+                        <div class="mt-4">
                             <span class="text-gray-600 font-semibold">status:</span>
                             <div class="flex justify-between items-center">
                                 {% if not ticket.resolved %}
@@ -131,12 +135,11 @@
                                 <form action="{% url 'resolve_ticket' ticket.ticket_id %}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        class="text-white bg-blue-500 w-30 text-xs rounded p-1 mt-1 hover:bg-blue-600">Mark
-                                        as
-                                        Resolved</button>
+                                        class="text-white bg-blue-500 w-30 text-xs rounded p-1 mt-1 hover:bg-blue-600">
+                                        Mark as Resolved
+                                    </button>
                                 </form>
-                                {% endif %}
-                                {% else %}
+                                {% endif %} {% else %}
                                 <div class="text-white bg-green-500 w-14 text-xs rounded p-1 mt-1">
                                     <p>Resolved</p>
                                 </div>
@@ -148,41 +151,51 @@
                 {% endfor %}
             </div>
         </div>
-
     </section>
-    <hr class="border-t border-gray-600 my-3">
+    <hr class="border-t border-gray-600 my-3" />
     <div>
         <div class="px-6 mt-4">
-            <div class="text-xl font-semibold">Integration With Security Infrastructure - <span
-                    class="text-red-600">SIEM</span> </div>
-            <div class="flex w-fit gap-4 font-semibold text-sm mt-2 ">
-                <span class="bg-green-500 text-white rounded  px-4 ">Available on Demand</span>
+            <div class="text-xl font-semibold">
+                Integration With Security Infrastructure -
+                <span class="text-red-600">SIEM</span>
+            </div>
+            <div class="flex w-fit gap-4 font-semibold text-sm mt-2">
+                <span class="bg-green-500 text-white rounded px-4">Available on Demand</span>
                 <a target="_blank" href="https://gkavach.com">
-                    <div class="bg-gray-400 px-3 rounded text-gray-100 "> Learn more </div>
+                    <div
+                        class="bg-gray-400 border-2 border-gray-600 hover:bg-gray-300 hover:text-black transition duration-200 ease-in-out px-3 rounded text-gray-100">
+                        Learn more
+                    </div>
                 </a>
             </div>
         </div>
         <div class="mt-2 flex-col w-full p-4 gap-4 flex md:flex-row">
-            <div class="w-full  md:w-3/4 border-2 border-red-700 shadow-2xl rounded overflow-hidden"><img
-                    src="/static/images/siem.png" alt="SIEM Image"
-                    class="transform hover:scale-105 transition-all duration-200 ease-in-out object-cover"></div>
-            <div class="mb-2 text-center text-gray-500 w-full md:w-2/3">SIEM (Security Information and Event Management)
-                is a
-                robust
-                cybersecurity solution that integrates Security Information Management (SIM) and Security Event
-                Management (SEM) functionalities into a unified platform. SIM involves the collection, normalization,
-                and analysis of security data from various sources, such as logs and events from networks, systems, and
-                applications. On the other hand, SEM focuses on real-time monitoring and correlation of security events
-                to detect and respond promptly to potential threats. Together, SIEM enables organizations to gain
-                comprehensive visibility into their IT infrastructure, detect security incidents in real-time, and
-                facilitate effective incident response and forensic investigations. By centralizing security data and
-                providing advanced analytics capabilities, SIEM helps organizations enhance their security posture,
-                comply with regulatory requirements, and mitigate risks effectively.
+            <div class="w-full md:w-3/4 border-2 border-red-700 shadow-2xl rounded overflow-hidden">
+                <img src="/static/images/siem.png" alt="SIEM Image"
+                    class="transform hover:scale-105 transition-all duration-200 ease-in-out object-cover" />
             </div>
-        </div>
-        <div class="mx-6 mb-4">
-            <a target="_blank" href="https://www.gkavach.com/" class="text-blue-500 text-sm hover:underline">Learn more
-                about SIEM</a>
+            <div class="mb-2 text-center text-gray-500 w-full md:w-2/3">
+                <div class="">
+                    SIEM (Security Information and Event Management) is a robust
+                    cybersecurity solution that integrates Security Information Management
+                    (SIM) and Security Event Management (SEM) functionalities into a
+                    unified platform. SIM involves the collection, normalization, and
+                    analysis of security data from various sources, such as logs and
+                    events from networks, systems, and applications. On the other hand,
+                    SEM focuses on real-time monitoring and correlation of security events
+                    to detect and respond promptly to potential threats. Together, SIEM
+                    enables organizations to gain comprehensive visibility into their IT
+                    infrastructure, detect security incidents in real-time, and facilitate
+                    effective incident response and forensic investigations. By
+                    centralizing security data and providing advanced analytics
+                    capabilities, SIEM helps organizations enhance their security posture,
+                    comply with regulatory requirements, and mitigate risks effectively.
+                </div>
+                <div class="my-4 ">
+                    <a target="_blank" href="https://www.gkavach.com/"
+                        class="border-2 border-red-500 px-4 py-1 rounded-lg bg-red-200  text-black font-medium hover:bg-red-600 hover:text-white transition-all duration-300 ease-in-out">Learn more about SIEM</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -201,13 +214,13 @@
     // }
 
     function showForm() {
-        document.getElementById('ticketForm').classList.remove('hidden');
-        document.getElementById('backgroundMask').classList.remove('hidden');
+        document.getElementById("ticketForm").classList.remove("hidden");
+        document.getElementById("backgroundMask").classList.remove("hidden");
     }
 
     function hideForm() {
-        document.getElementById('ticketForm').classList.add('hidden');
-        document.getElementById('backgroundMask').classList.add('hidden');
+        document.getElementById("ticketForm").classList.add("hidden");
+        document.getElementById("backgroundMask").classList.add("hidden");
     }
 </script>
 {% endblock content %}
