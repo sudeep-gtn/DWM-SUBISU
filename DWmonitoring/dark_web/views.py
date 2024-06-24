@@ -486,20 +486,20 @@ class ThreatActor(LoginRequiredMixin, View):
     login_url = "login"
     
     def get(self, request):
-        url = "https://api.feedly.com/v3/entities/nlp%2Ff%2Fentity%2Fgz%3Ata%3A68391641-859f-4a9a-9a1e-3e5cf71ec376"
+        # url = "https://api.feedly.com/v3/entities/nlp%2Ff%2Fentity%2Fgz%3Ata%3A68391641-859f-4a9a-9a1e-3e5cf71ec376"
 
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer 68391641-859f-4a9a-9a1e-3e5cf71ec376"
-        }
-        response = requests.get(url, headers=headers)
+        # headers = {
+        #     "accept": "application/json",
+        #     "Authorization": "Bearer 68391641-859f-4a9a-9a1e-3e5cf71ec376"
+        # }
+        # response = requests.get(url, headers=headers)
      
-        if response.status_code != 200:
-            context = {'error': 'Error fetching the API', 'details': response.text}
-        else:
-            context = {'data': response.json()}
+        # if response.status_code != 200:
+        #     context = {'error': 'Error fetching the API', 'details': response.text}
+        # else:
+        #     context = {'data': response.json()}
 
-        return render(request, "threatActorProfile.html", {'context':context})
+        return render(request, "threatActorProfile.html")
 
 class IncidentResponse(LoginRequiredMixin, View):
     login_url = "login"
@@ -600,7 +600,7 @@ class GenerateReportView(View):
         }
 
         # Render the HTML template with the data
-        html_string = render_to_string('report_template.html', context)
+        html_string = render_to_string('report_template.html', context,request)
 
         # Convert the rendered HTML to PDF
         html = HTML(string=html_string)
