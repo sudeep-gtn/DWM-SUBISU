@@ -21,8 +21,14 @@ def send_otp_email(user):
 
 
 def is_otp_valid(user, otp):
-    if user.otp == (
-        otp and timezone.now() < user.otp_created_at + timedelta(minutes=10)
-    ):
+    print("user db otp", user.otp)
+    # if user.otp == (
+    #     otp and timezone.now() < user.otp_created_at + timedelta(minutes=60)
+    # ):
+
+    print("timezone now :", timezone.now())
+    print("created ate : ", user.otp_created_at)
+
+    if user.otp == otp:
         return True
     return False

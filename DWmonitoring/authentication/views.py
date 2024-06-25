@@ -14,6 +14,9 @@ from django.contrib import messages
 from .utils import send_otp_email, is_otp_valid
 
 
+from .decorators import superadmin_required, org_admin_required
+
+
 class RegisterView(View):
     def get(self, request):
         if request.user.is_authenticated:
@@ -104,6 +107,7 @@ class VerifyOTP(View):
 
     def post(self, request):
         otp = request.POST.get("otp").strip()
+        print("otp",otp)
         email = request.session.get("registered_email")
         if email:
             try:
@@ -151,6 +155,8 @@ class TermsAndConditionsView(View):
     def get(self, request):
         return render(request, "terms_and_conditions.html")
     
+
+@org_admin_required
 class BrandProtectionView(LoginRequiredMixin, View):
     login_url = "login"
     def get(self, request):

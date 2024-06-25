@@ -21,11 +21,19 @@ class CustomUserManager(BaseUserManager):
         user = self.create_user(email, full_name, password=password)
         user.is_superuser = True
         user.is_staff = True
+        user.is_superadmin = True
         user.is_email_verified = True
         user.save(using=self._db)
         return user
-
-
+    
+    def create_org_admin(self, email, full_name, password=None, organization=None):
+        user = self.create_user(email, full_name, password=password)
+        user.is_staff = True
+        user.is_org_admin = True
+        user.organization = organization
+        user.save(using=self._db)
+        return user
+    
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100)
@@ -35,6 +43,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     otp = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)
     is_email_verified = models.BooleanField(default=False)
+    is_superadmin = models.BooleanField(default=False)
     is_org_admin = models.BooleanField(default=False)
     organization = models.ForeignKey('Organization', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
 
@@ -50,14 +59,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'user'
         verbose_name_plural = 'users'
 
-
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     established = models.DateField()
     monitoring_since = models.DateField(auto_now_add=True)
     total_users = models.IntegerField(default=0)
-
     def __str__(self):
         return self.name
 
