@@ -36,8 +36,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     otp_created_at = models.DateTimeField(blank=True, null=True)
     is_email_verified = models.BooleanField(default=False)
     is_org_admin = models.BooleanField(default=False)
-    organization = models.ForeignKey('Organization', on_delete=models.SET_NULL,
-                                      null=True, blank=True, related_name='users')
+    organization = models.ForeignKey('Organization', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
 
     objects = CustomUserManager()
 
