@@ -13,6 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from .utils import send_otp_email, is_otp_valid
 
+from django.utils.decorators import method_decorator
 
 from .decorators import superadmin_required, org_admin_required
 
@@ -156,7 +157,9 @@ class TermsAndConditionsView(View):
         return render(request, "terms_and_conditions.html")
     
 
-@org_admin_required
+# @org_admin_required
+# @superadmin_required
+@method_decorator(org_admin_required, name='dispatch')
 class BrandProtectionView(LoginRequiredMixin, View):
     login_url = "login"
     def get(self, request):
@@ -222,3 +225,9 @@ class ContactPageView(View):
 
     def get(self, request):
         return render(request, "contact.html")
+    
+
+
+class NoPermissionView(View) :
+    def get(self, request):
+        return HttpResponse("403 Forbidden")
