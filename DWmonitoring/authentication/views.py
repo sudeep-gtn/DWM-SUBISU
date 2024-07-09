@@ -16,7 +16,7 @@ from .utils import send_otp_email, is_otp_valid
 from django.utils.decorators import method_decorator
 
 from .decorators import superadmin_required, org_admin_required
-
+from textblob import TextBlob
 
 class RegisterView(View):
     def get(self, request):
@@ -159,8 +159,15 @@ class TermsAndConditionsView(View):
 
 # @org_admin_required
 # @superadmin_required
-@method_decorator(org_admin_required, name='dispatch')
+# @method_decorator(org_admin_required, name='dispatch')
 class BrandProtectionView(LoginRequiredMixin, View):
+
+    text = 'Hey , SUBISU is has soo bad internet connection. Never use this ISP.'
+    blob = TextBlob(text)
+    # print("blob.tags ==>", blob.tags )
+    # print("blob.noun_phrases =>",blob.noun_phrases )
+    for sentence in blob.sentences:
+        print("polirity ==> ",sentence.sentiment)
     login_url = "login"
     def get(self, request):
         return render(request, "brand-protection.html")

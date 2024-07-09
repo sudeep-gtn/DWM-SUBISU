@@ -1,0 +1,134 @@
+Metadata-Version: 2.1
+Name: cybernews
+Version: 1.1.2
+Summary: Get the latest Cyber Security updates curated from different sources under one roof.
+Author: GhoulBond
+Author-email: hitesh22rana@gmail.com
+Keywords: python,web scraping,news,cyber news,hacker news,hacking,cyber,free,open source,latest news,project,api,REST-API,cyber security,cybersecurity,updates,news,cyber attacks,cyber threats,online security
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Unix
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: beautifulsoup4
+Requires-Dist: lxml
+Requires-Dist: httpx
+Requires-Dist: requests
+
+
+<h1>cybernews</h1>
+
+Python package and API that provides latest Cyber Security updates from various sources under one roof and use Web-Scraping under the hood.
+
+
+
+<br>
+
+<h2>Features :-</h2>
+
+
+
+```
+
+News Headlines
+
+News Author
+
+Full News
+
+News Article URL
+
+News Image
+
+News Date
+
+```
+
+<br>
+
+Developed by GhoulBond (c) 2023<br><br>
+
+
+
+<h2>Setup</h2>
+
+
+
+
+
+<h3>For Window Users</h3>
+
+
+
+```python
+
+pip install cybernews 
+
+```
+
+
+
+<h3>For Linux/Mac Users</h3>
+
+
+
+```python
+
+pip3 install cybernews
+
+```
+
+
+
+<h2>Use</h2>
+
+
+
+```python
+
+from cybernews.cybernews import CyberNews
+
+
+
+news = CyberNews() # Instance is created
+
+```
+
+
+
+| **S.No.** | **Operation**      | **Functions**                 |
+
+|-----------|--------------------|-------------------------------|
+
+| 1         | General News       | news.get_news("general")      |
+
+| 2         | Data Breach News   | news.get_news("dataBreach")   |
+
+| 3         | Cyber Attack News  | news.get_news("cyberAttack")  |
+
+| 4         | Vulnerability News | news.get_news("vulenrability")|
+
+| 5         | Malware News       | news.get_news("malware")      |
+
+| 6         | Security News      | news.get_news("security")     |
+
+| 7         | Cloud News         | news.get_news("cloud")        |
+
+| 8         | Tech News          | news.get_news("tech")         |
+
+| 9         | IOT News           | news.get_news("iot")          |
+
+| 10        | Big Data News      | news.get_news("bigData")      |
+
+| 11        | Business News      | news.get_news("business")     |
+
+| 12        | Mobility News      | news.get_news("mobility")     |
+
+| 13        | Research News      | news.get_news("research")     |
+
+| 14        | Corporate News     | news.get_news("corporate")    |
+
+| 15        | Social Media News  | news.get_news("socialMedia")  |
