@@ -1,5 +1,5 @@
 from django.db import models
-
+from authentication.models import CustomUser
 class Card(models.Model):
     card_bin_number = models.IntegerField(null=True, blank=True, verbose_name='Card BIN Number')
     card_type = models.CharField(max_length=40, null=True, blank=True, verbose_name='Card Type')
@@ -89,8 +89,20 @@ class Ticket(models.Model):
     ticket_id = models.AutoField(primary_key=True)
     ticket_title = models.CharField(max_length=255, null=True, blank=True)
     ticket_description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    
     image = models.ImageField(upload_to='ticket_images/', blank=True, null=True)
     resolved = models.BooleanField(default=False)
 
     def __str__(self):
         return self.ticket_title
+
+
+class Comment(models.Model):
+    ticket = models.ForeignKey(Ticket, related_name='comments', on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.author.email} on {self.ticket.ticket_title}'

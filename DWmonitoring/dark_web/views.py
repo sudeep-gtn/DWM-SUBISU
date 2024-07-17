@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from .models import Card, Domain, BlackMarket, Notification, StealerLogs, PIIExposure, Ticket, calculate_organization_health
+from .models import Card, Domain, BlackMarket, Notification, StealerLogs, PIIExposure, Ticket,Comment, calculate_organization_health
 import json
 import requests
 from collections import defaultdict
@@ -11,6 +11,8 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from weasyprint import HTML
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import DetailView
 
 class DashboardView(LoginRequiredMixin, View):
     login_url = "login"
@@ -673,39 +675,6 @@ class PreviewReportView(View):
     
     
 class TicketsView(View):
-    # def get(self, request):
-    #     tickets = Ticket.objects.all()
-    #     Ticket.objects.create(
-    #         ticket_title='Data Breach on example.com',
-    #         ticket_description='Details about the data breach on example.com...',
-    #         resolved=False
-    #     )
-
-    #     Ticket.objects.create(
-    #         ticket_title='Unauthorized Access on testsite.org',
-    #         ticket_description='Details about the unauthorized access on testsite.org...',
-    #         resolved=True
-    #     )
-
-    #     Ticket.objects.create(
-    #         ticket_title='Vulnerability found on mywebsite.net',
-    #         ticket_description='Details about the vulnerability found on mywebsite.net...',
-    #         resolved=False
-    #     )
-
-    #     Ticket.objects.create(
-    #         ticket_title='Suspicious login on anothersite.io',
-    #         ticket_description='Details about the suspicious login on anothersite.io...',
-    #         resolved=True
-    #     )
-
-    #     Ticket.objects.create(
-    #         ticket_title='Data leak report for sampledomain.edu',
-    #         ticket_description='Details about the data leak report for sampledomain.edu...',
-    #         resolved=False
-    #     )
-
-    #     return render(request, "tickets.html", {'tickets': tickets})
     
     def post(self, request, *args, **kwargs):
         ticket_id = kwargs.get('ticket_id')
@@ -719,8 +688,45 @@ class TicketsView(View):
         return redirect('incident-response')
 
 
+# class TicketDetailView(View):
+#     model = Ticket
+#     template_name = 'ticket_details.html'
+#     context_object_name = 'ticket'
 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['comments'] = Comment.objects.filter(ticket=self.get_object()).order_by('-created_at')
+#         # context['form'] = CommentForm()
+#         return context
 
+class TicketDetailView(DetailView):
+    model = Ticket
+    template_name = 'ticket_details.html'
+    context_object_name = 'ticket'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = Comment.objects.filter(ticket=self.get_object()).order_by('-created_at')
+
+        # print("Context : ", context)
+        return context
+
+class AddCommentView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        ticket = get_object_or_404(Ticket, pk=pk)
+        comment_text = request.POST.get('comment')
+        
+        if comment_text:
+            new_comment = Comment.objects.create(ticket=ticket, author=request.user, text=comment_text)
+            data = {
+                'author': new_comment.author.email,
+                'text': new_comment.text,
+                'created_at': new_comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            print("Data :  ", data)
+            return JsonResponse({'comment': data})
+        else:
+            return JsonResponse({'error': 'Comment text is required'}, status=400)
 class SupportAndAssistance(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self, request):

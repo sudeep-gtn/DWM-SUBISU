@@ -10,7 +10,8 @@ from .views import (
     IncidentResponse,AnalyticsAndReports,
     LiveThreatMap,GenerateReportView,PreviewReportView,
     TicketsView, FetchThreatIntelligenceData, SupportAndAssistance,
-    TermsAndConditions
+    TermsAndConditions,
+    TicketDetailView, AddCommentView
     )
 urlpatterns = [
     path('dark-web-monitoring/dashboard', DashboardView.as_view(), name="dashboard"),
@@ -35,6 +36,10 @@ urlpatterns = [
     path('report/', GenerateReportView.as_view() , name="generate_report"),
     path('preview-report/', PreviewReportView.as_view(), name="preview-report"),
     path('resolve/<int:ticket_id>/', TicketsView.as_view(), name='resolve_ticket'),
+
+    path('ticket-details/<int:pk>/', TicketDetailView.as_view(), name='ticket_details'),
+    path('add-comment/<int:pk>/', AddCommentView.as_view(), name='add_comment'),
+
 
     path('support-and-assistance', SupportAndAssistance.as_view(), name='support-and-assistance'),
     path('terms-and-conditions', TermsAndConditions.as_view(), name='terms-and-conditions')
