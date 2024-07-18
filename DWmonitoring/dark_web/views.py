@@ -507,9 +507,12 @@ class IncidentResponse(LoginRequiredMixin, View):
     login_url = "login"
 
     def get(self, request):
-        tickets = Ticket.objects.all()
+        tickets = Ticket.objects.filter(user=request.user).order_by('-created_at')
+        print("tickets ", tickets )
+        if request.user.is_superadmin or request.user.is_org_admin:
+            tickets = Ticket.objects.all().order_by('-created_at')
         return render(request, 'incidentResponse.html', {'tickets': tickets})
-
+    
     def post(self, request):
         ticket_title = request.POST.get('ticket_title')
         ticket_description = request.POST.get('ticket_description')
@@ -518,7 +521,8 @@ class IncidentResponse(LoginRequiredMixin, View):
         new_ticket = Ticket(
             ticket_title=ticket_title,
             ticket_description=ticket_description,
-            image=image_file
+            image=image_file,
+            user = request.user
             )
         new_ticket.save()
 
@@ -706,27 +710,39 @@ class TicketDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comments'] = Comment.objects.filter(ticket=self.get_object()).order_by('-created_at')
+        context['comments'] = Comment.objects.filter(ticket=self.get_object()).order_by('created_at')
 
         # print("Context : ", context)
         return context
+
+# class AddCommentView(LoginRequiredMixin, View):
+#     def post(self, request, pk):
+#         ticket = get_object_or_404(Ticket, pk=pk)
+#         comment_text = request.POST.get('comment')
+        
+#         if comment_text:
+#             new_comment = Comment.objects.create(ticket=ticket, author=request.user, text=comment_text)
+#             data = {
+#                 'author': new_comment.author.email,
+#                 'text': new_comment.text,
+#                 'created_at': new_comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+#             }
+#             print("Data :  ", data)
+#             return JsonResponse({'comment': data})
+#         else:
+#             return JsonResponse({'error': 'Comment text is required'}, status=400)
+
 
 class AddCommentView(LoginRequiredMixin, View):
     def post(self, request, pk):
         ticket = get_object_or_404(Ticket, pk=pk)
         comment_text = request.POST.get('comment')
-        
         if comment_text:
-            new_comment = Comment.objects.create(ticket=ticket, author=request.user, text=comment_text)
-            data = {
-                'author': new_comment.author.email,
-                'text': new_comment.text,
-                'created_at': new_comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            }
-            print("Data :  ", data)
-            return JsonResponse({'comment': data})
-        else:
-            return JsonResponse({'error': 'Comment text is required'}, status=400)
+
+            Comment.objects.create(ticket=ticket, author=request.user, text=comment_text)
+        return redirect('ticket_details', pk=pk)
+
+
 class SupportAndAssistance(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self, request):

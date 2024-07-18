@@ -1,5 +1,6 @@
 from django.db import models
 from authentication.models import CustomUser
+from django.conf import settings
 class Card(models.Model):
     card_bin_number = models.IntegerField(null=True, blank=True, verbose_name='Card BIN Number')
     card_type = models.CharField(max_length=40, null=True, blank=True, verbose_name='Card Type')
@@ -94,8 +95,11 @@ class Ticket(models.Model):
     image = models.ImageField(upload_to='ticket_images/', blank=True, null=True)
     resolved = models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.ticket_title
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Linking to CustomUser
+
+    def __int__(self):
+        return self.ticket_id
 
 
 class Comment(models.Model):
