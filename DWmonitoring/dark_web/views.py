@@ -13,7 +13,11 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import DetailView
-
+from django.core.mail import send_mail
+from django.conf import settings
+from wkhtmltopdf.views import PDFTemplateResponse
+from xhtml2pdf import pisa
+import io
 class DashboardView(LoginRequiredMixin, View):
     login_url = "login"
 
@@ -507,10 +511,14 @@ class IncidentResponse(LoginRequiredMixin, View):
     login_url = "login"
 
     def get(self, request):
-        tickets = Ticket.objects.filter(user=request.user).order_by('-created_at')
-        print("tickets ", tickets )
-        if request.user.is_superadmin or request.user.is_org_admin:
+        user = request.user
+        if user.is_superadmin or user.is_org_admin:
             tickets = Ticket.objects.all().order_by('-created_at')
+        else:
+            open_tickets = Ticket.objects.filter(user=user, resolved=False).order_by('-created_at')
+            closed_tickets = Ticket.objects.filter(resolved=True).order_by('-created_at')
+            tickets = list(open_tickets) + list(closed_tickets)
+        
         return render(request, 'incidentResponse.html', {'tickets': tickets})
     
     def post(self, request):
@@ -525,7 +533,13 @@ class IncidentResponse(LoginRequiredMixin, View):
             user = request.user
             )
         new_ticket.save()
-
+        admin_email = settings.ADMIN_EMAIL
+        subject = f'New Ticket Created: {ticket_title}'
+        message = f'A new ticket has been created by {request.user.full_name}.\n\nTitle: {ticket_title}\n\nDescription: {ticket_description}'
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [admin_email]
+        if not request.user.is_superuser and not request.user.is_org_admin: 
+            send_mail(subject, message, from_email, recipient_list)
         return redirect('incident-response')
     
 class AnalyticsAndReports(LoginRequiredMixin, View):
@@ -606,17 +620,30 @@ class GenerateReportView(View):
         }
 
         # Render the HTML template with the data
-        html_string = render_to_string('report_template.html', context,request)
+        html_string = render_to_string('report_template.html', context)
+        pdf = self.generate_pdf(html_string)
+        
+        # Return PDF as response
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="dwm-report.pdf"'
 
         # Convert the rendered HTML to PDF
-        html = HTML(string=html_string)
-        pdf = html.write_pdf()
+        # html = HTML(string=html_string)
+        # pdf = html.write_pdf()
+
 
         # Create a response with the PDF
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        # response = HttpResponse(pdf, content_type='application/pdf')
+        # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
         return response
     
+    def generate_pdf(self, html_string):
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html_string), dest=result)
+        if pdf.err:
+            return None
+        return result.getvalue()
+
 
 class PreviewReportView(View):
     def get(self, request, *args, **kwargs):
@@ -738,7 +765,6 @@ class AddCommentView(LoginRequiredMixin, View):
         ticket = get_object_or_404(Ticket, pk=pk)
         comment_text = request.POST.get('comment')
         if comment_text:
-
             Comment.objects.create(ticket=ticket, author=request.user, text=comment_text)
         return redirect('ticket_details', pk=pk)
 

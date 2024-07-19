@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <!-- <link rel="stylesheet" href="/static/css/report.css"> -->
+    <link rel="stylesheet" href="/static/css/report.css">
     <title>Report</title>
     <style>
-
+        /* Add Tailwind CSS here */
+        @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
         .title-header {
             font-weight: 600;
             font-size: 20px;
@@ -75,9 +76,16 @@
 <body>
     <header style="display: flex; justify-content: space-between;">
         <div style="font-weight: 700; font-size: 26px;"> Dark Web Monitoring Report </div>
-        <div> <img src="https://i0.wp.com/gtn.com.np/storage/2022/08/greentick_img.png?fit=2332%2C769&ssl=1" width="140" alt="logo"></div>
+        <!-- <div> <img src="https://i0.wp.com/gtn.com.np/storage/2022/08/greentick_img.png?fit=2332%2C769&ssl=1" width="140" alt="logo"></div> -->
+        <div> <img src="/static/images/logo-green1.png" width="140" alt="logo"></div>
+
     </header>
 
+
+    <div>
+      <div class="font-semibold text-xl text-red-600">This is sample html with tailwindcss</div>
+      <span class="bg-gray-300 px-4 w-fit py-2 "> sudeep bogati </span>
+    </div>
 
     {% if domains %}
     <div class="header-container">

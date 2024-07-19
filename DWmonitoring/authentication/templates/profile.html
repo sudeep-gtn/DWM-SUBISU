@@ -5,7 +5,7 @@ Profile
 {% endblock title %}
 
 {% block content %}
-<div class="flex sm:flex-row flex-col">
+<div class="flex lg:flex-row flex-col">
     <div class="bg-white overflow-y-scroll h-[700px] text-gray-900 p-8 rounded-lg shadow-lg sm:mx-2 sm:my-2 w-full sm:w-1/2">
         <h1 class="text-2xl font-bold mb-4">Account Information</h1>
         <hr class="border-t border-gray-300 my-6">
@@ -145,13 +145,6 @@ Profile
             </div>
             <hr class="border-t border-gray-300 my-6">
     </div>
-
-
-    {% if user.is_superadmin %}
-    <div>
-        <a> Visit admin site  </a>
-    </div>
-    {% endif %}
 
     <div class="bg-white text-gray-900 p-8 rounded-lg shadow-lg sm:mx-2 sm:my-2 w-full sm:w-1/2">
         <h1 class="text-2xl font-bold mb-4">Audit Logs</h1>

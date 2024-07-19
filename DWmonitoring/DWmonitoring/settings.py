@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     # 'authentication.apps.AuthenticationConfig',
-    'dark_web'
+    'dark_web',
+    'wkhtmltopdf'
 ]
 
 MIDDLEWARE = [
@@ -123,7 +124,7 @@ USE_TZ = True
 
 
 from pathlib import Path
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATICFILES_DIRS = [
@@ -174,3 +175,4 @@ EMAIL_HOST_PASSWORD = 'cyqxpptigbycrkcb'
 DEFAULT_FROM_EMAIL='sudeepbogati@google.com'
 # print(EMAIL_HOST_USER)
 # print(EMAIL_HOST_PASSWORD)
+ADMIN_EMAIL = 'sudeep.bogati@greentick.com.np'

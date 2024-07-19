@@ -100,85 +100,70 @@
         {% endif %}
 
         <div>
-            <h2 class="text-xl font-bold text-gray-900 mb-4"> Collected tickets  </h2>
-            <div class="font-semibold px-4 text-lg text-gray-700 "> Unsolved / Open tickets </div>
+            <h2 class="text-xl font-bold text-gray-900 mb-4"> Collected tickets </h2>
+            <div class="font-semibold px-4 text-lg text-gray-700 "> Open tickets </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for ticket in tickets %}
                 {% if not ticket.resolved %}
-                <div class="bg-white p-4  border-2 border-red-200 rounded-lg shadow-md overflow-hidden">
-                    <!-- <div class="p-4"> -->
-                    <div class="font-normal  flex gap-2">
-                        <div class="text-lg text-gray-900 font-semibold">{{ ticket.ticket_title }}</div>
-                        <div class="flex flex-row gap-2 items-center">
-                            {% if not ticket.resolved %}
-                            <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
-                                <p>Open</p>
+                <div class="bg-white p-4 border-2 border-red-300 rounded-lg shadow-md overflow-hidden h-56 flex flex-col justify-between">
+                    <div class="overflow-y-hidden flex-grow">
+                        <div class="font-normal flex gap-2">
+                            <div class="text-lg text-gray-900 font-semibold truncate">{{ ticket.ticket_title }}</div>
+                            <div class="flex flex-row gap-2 items-center">
+                                {% if not ticket.resolved %}
+                                <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
+                                    <p>Open</p>
+                                </div>
+                                {% else %}
+                                <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
+                                    Resolved
+                                </div>
+                                {% endif %}
                             </div>
-                            {% else %}
-                            <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
-                                Resolved
-                            </div>
+                        </div>
+                        <div class="text-gray-600">
+                            Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
+                        </div>
+                        <div class="text-xs mt-0 text-gray-500 tracking-wide">
+                            {% if ticket.created_at is not None %}
+                            {{ ticket.created_at }}
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="text-gray-600 ">
-                        Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
-                    </div>
-                    <div class="text-xs mt-0 pb-6 text-gray-500 tracking-wide">
-                        {% if ticket.created_at is not None %}
-                        {{ ticket.created_at }}
+                        <div class="text-gray-500 my-4  text-sm font-medium overflow-hidden overflow-ellipsis h-16">
+                            {{ ticket.ticket_description }}
+                        </div>
+                        {% if ticket.image %}
+                        <div class="w-fit mb-4 ">
+                            <a target="_blank" href="{{ ticket.image.url }}">
+                                <div
+                                    class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
+                                    <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
+                                    attachment
+                                </div>
+                            </a>
+                        </div>
                         {% endif %}
                     </div>
-                    <div class="text-gray-500 mb-3 text-sm font-medium">{{ ticket.ticket_description }}</div>
-                    {% if ticket.image %}
-                    <div class="max-w-[200px]">
-                        <a target="_blank" href="{{ ticket.image.url }}">
-                            <div
-                                class="text-base py-1 border border-gray-400 px-2 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
-                                attachment
-                            </div>
+                    <div class="flex mt-4 justify-between">
+                        <a href="{% url 'ticket_details' ticket.ticket_id %}"
+                            class="border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold rounded-md shadow-xl">
+                            See in Detail
                         </a>
-                    </div>
-                    {% endif %}
-
-                    <div class="flex mt-4 relative bottom-0 justify-between">
-                        <button
-                            class="load-more-btn border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold  rounded-md shadow-xl "
-                            data-ticket-id="{{ ticket.ticket_id }}"> See in Detail </button>
-                        {% if not ticket.resolved %}
+                        {% if not ticket.resolved and user.is_superadmin %}
                         <form action="{% url 'resolve_ticket' ticket.ticket_id %}" class="flex" method="POST">
                             {% csrf_token %}
                             <button type="submit"
-                                class="text-white bg-blue-500 font-semibold w-fit text-sm rounded px-3  shadow-xl shadow-blue-500/20] hover:bg-green-500">
+                                class="text-white bg-blue-500 font-semibold w-fit text-sm rounded px-3 shadow-xl shadow-blue-500/20 hover:bg-green-500">
                                 Mark as Resolved
                             </button>
                         </form>
                         {% endif %}
                     </div>
-                    <!-- </div> -->
-                </div>
-
-                <!-- Popup -->
-                <div class="fixed inset-0 hidden z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center ticket-popup"
-                    id="ticket-popup-{{ ticket.ticket_id }}">
-                    <div class="bg-white rounded-lg overflow-hidden w-5/6 lg:w-2/4 h-4/5 p-6 relative">
-                        <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 close-popup"
-                            data-ticket-id="{{ ticket.ticket_id }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <div class="ticket-details-content overflow-y-auto h-full"
-                            id="ticket-details-{{ ticket.ticket_id }}">
-                            <!-- Ticket details and comments will be loaded here -->
-                        </div>
-                    </div>
                 </div>
                 {% endif %}
                 {% endfor %}
             </div>
+            
 
 
 
@@ -187,59 +172,60 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for ticket in tickets %}
                 {% if ticket.resolved %}
-                <div class="bg-gray-200 p-4  border-2 border-gray-400 rounded-lg shadow-md overflow-hidden">
-                    <!-- <div class="p-4"> -->
-                    <div class="font-normal  flex gap-2">
-                        <div class="text-lg text-gray-900 font-semibold">{{ ticket.ticket_title }}</div>
-                        <div class="flex flex-row gap-2 items-center">
-                            {% if not ticket.resolved %}
-                            <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
-                                <p>Open</p>
+                <div class="bg-slate-200 p-4 border-2 border-gray-400 rounded-lg shadow-md overflow-hidden h-56 flex flex-col justify-between">
+                    <div class="overflow-y-hidden flex-grow">
+                        <div class="font-normal flex gap-2">
+                            <div class="text-lg text-gray-900 font-semibold truncate">{{ ticket.ticket_title }}</div>
+                            <div class="flex flex-row gap-2 items-center">
+                                {% if not ticket.resolved %}
+                                <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
+                                    <p>Open</p>
+                                </div>
+                                {% else %}
+                                <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
+                                    Resolved
+                                </div>
+                                {% endif %}
                             </div>
-                            {% else %}
-                            <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
-                                Resolved
-                            </div>
+                        </div>
+                        <div class="text-gray-600">
+                            Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
+                        </div>
+                        <div class="text-xs mt-0 text-gray-500 tracking-wide">
+                            {% if ticket.created_at is not None %}
+                            {{ ticket.created_at }}
                             {% endif %}
                         </div>
-                    </div>
-
-                    <div class="text-gray-600 ">
-                        Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
-                    </div>
-                    <div class="text-xs mt-0 pb-6 text-gray-500 tracking-wide">
-                        {% if ticket.created_at is not None %}
-                        {{ ticket.created_at }}
+                        <div class="text-gray-500 my-4  text-sm font-medium overflow-hidden overflow-ellipsis h-16">
+                            {{ ticket.ticket_description }}
+                        </div>
+                        {% if ticket.image %}
+                        <div class="w-fit mb-4 ">
+                            <a target="_blank" href="{{ ticket.image.url }}">
+                                <div
+                                    class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
+                                    <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
+                                    attachment
+                                </div>
+                            </a>
+                        </div>
                         {% endif %}
                     </div>
-                    <div class="text-gray-500 mb-3 text-sm font-medium">{{ ticket.ticket_description }}</div>
-                    {% if ticket.image %}
-                    <div class="max-w-[200px]">
-                        <a target="_blank" href="{{ ticket.image.url }}">
-                            <div
-                                class="text-base py-1 border border-gray-400 px-2 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-300">
-                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
-                                attachment
-                            </div>
+                    <div class="flex mt-4 justify-between">
+                        <a href="{% url 'ticket_details' ticket.ticket_id %}"
+                            class="border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold rounded-md shadow-xl">
+                            See in Detail
                         </a>
-                    </div>
-                    {% endif %}
-
-                    <div class="flex mt-4 relative bottom-0 justify-between">
-                        <button
-                            class="load-more-btn border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold  rounded-md shadow-xl "
-                            data-ticket-id="{{ ticket.ticket_id }}"> See in Detail </button>
-                        {% if not ticket.resolved  %}
+                        {% if not ticket.resolved and user.is_superadmin %}
                         <form action="{% url 'resolve_ticket' ticket.ticket_id %}" class="flex" method="POST">
                             {% csrf_token %}
                             <button type="submit"
-                                class="text-white bg-blue-500 font-semibold w-fit text-sm rounded px-3  shadow-xl shadow-blue-500/20] hover:bg-green-500">
+                                class="text-white bg-blue-500 font-semibold w-fit text-sm rounded px-3 shadow-xl shadow-blue-500/20 hover:bg-green-500">
                                 Mark as Resolved
                             </button>
                         </form>
                         {% endif %}
                     </div>
-                    <!-- </div> -->
                 </div>
 
                 <!-- Popup -->
