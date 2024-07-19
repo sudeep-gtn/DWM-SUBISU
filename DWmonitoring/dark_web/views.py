@@ -18,6 +18,14 @@ from django.conf import settings
 from wkhtmltopdf.views import PDFTemplateResponse
 from xhtml2pdf import pisa
 import io
+import os
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph,Spacer
+from reportlab.pdfgen import canvas
+
+
 class DashboardView(LoginRequiredMixin, View):
     login_url = "login"
 
@@ -568,7 +576,7 @@ class GenerateReportView(View):
     def post(self, request, *args, **kwargs):
         filters = request.POST.getlist('filters')
         date_from = request.POST.get('date_from')
-        date_to = request.POST.get('date_to')
+        date_to = request.POST.get('date_to') 
 
         date_from = datetime.strptime(date_from, '%Y-%m-%d') if date_from else None
         date_to = datetime.strptime(date_to, '%Y-%m-%d') if date_to else None
@@ -620,13 +628,72 @@ class GenerateReportView(View):
         }
 
         # Render the HTML template with the data
-        html_string = render_to_string('report_template.html', context)
-        pdf = self.generate_pdf(html_string)
-        
-        # Return PDF as response
-        response = HttpResponse(pdf, content_type='application/pdf')
+        # html_string = render_to_string('report_template.html', context)
+        response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="dwm-report.pdf"'
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4)
 
+        elements = []
+
+        # Add logo
+        logo_path = 'static/images/logo-green1.png'
+        # logo_path = os.path.join(settings.STATIC_URL, 'images/logo.png')
+        logo = Image(logo_path, width=100, height=50)
+        logo.hAlign = 'RIGHT'
+        elements.append(logo)
+
+        # Title and subtitle
+        styles = getSampleStyleSheet()
+        title = Paragraph("DWM Report", styles['Title'])
+        elements.append(title)
+        subtitle = Paragraph(f"Filters: {', '.join(filters)}<br/>Date Range: {date_from} to {date_to}", styles['Normal'])
+        subtitle.height = '50'
+        elements.append(subtitle)
+
+        def add_table(title, data, columns):
+            elements.append(Spacer(1, 12))
+            table_title = Paragraph(title, styles['Heading2'])
+            data_counts = Paragraph(f"Total findings : {len(data)}")
+            elements.append(table_title)
+
+            elements.append(data_counts)
+            table_data = [columns]
+            for item in data:
+                table_data.append([getattr(item, col) for col in columns])
+            table = Table(table_data)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                # ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),
+            ]))
+            elements.append(table)
+
+        # Add tables for each entity
+        if domains:
+            add_table("Domains", domains, ['name', 'domain_ip', 'source_ip', 'source_domain', 'posted_date', 'breach_date']) 
+        if cards:
+            add_table("Cards", cards, ['card_bin_number', 'card_type', 'expiry_date', 'cvv', 'card_holder_name', 'issuing_bank', 'breach_date', 'posted_date', 'breach_source', 'last_used_date', 'breach_source_domain'])
+
+        if pii:
+            add_table("PII Leaks", pii, ['name', 'breach_date', 'breach_ip', 'source_domain', 'threat_type', 'type_of_data', 'source', 'personal_email', 'phone'])
+
+        if stealer_logs:
+            add_table("Stealer Logs", stealer_logs, ['log_id', 'date_detected', 'data_type', 'source', 'details'])
+
+        if black_market:
+            add_table("Black Market", black_market, ['source', 'stealer_log_preview', 'related_assets', 'price', 'status', 'obtain_progress', 'discovery_date', 'incident'])
+
+        doc.build(elements)
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
         # Convert the rendered HTML to PDF
         # html = HTML(string=html_string)
         # pdf = html.write_pdf()
