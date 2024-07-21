@@ -127,6 +127,14 @@ from pathlib import Path
 STATIC_URL = '/static/'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+print("static root : ", STATIC_ROOT)
+
+print("base dir " , BASE_DIR)
+print("static files dir " )
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]

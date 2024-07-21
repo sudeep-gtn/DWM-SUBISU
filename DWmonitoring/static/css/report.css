@@ -1,4 +1,7 @@
-/* Custom CSS for Table */
+.test-css{
+  font-size: 40;
+  color: red;
+}
 
 .table-container {
     width: 100%;

@@ -1,0 +1,188 @@
+{% extends 'base.html' %} {% load static %} {% block title %} All tickets
+{% endblock title %} {% block header %}
+<header class="shadow-md py-2 px-4 flex justify-between items-center z-50">
+    <a href="{% url 'incident-response'%}" class="text-xl font-extrabold text-gray-700">
+        <div class="flex gap-2">
+            <span class="flex items-center justify-center"><img src="/static/images/ticket.svg" width="26" height="28"
+                    alt="ticket"></span>
+            <span class="text-gray-800"> Raised</span>
+            <span class="text-red-500"> Tickets </span>
+        </div>
+    </a>
+    <div class="relative flex gap-4 px-4">
+        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon" />
+        <button
+            class="hidden md:block border-2 border-gray-400 bg-gray-100 rounded-full p-2 {% if request.path == '/profile' %} border-red-600 {% endif %}"
+            onclick="toggleDropdown('profileDropdown')">
+            <img height="20" width="20" src="https://img.icons8.com/?size=100&id=fJ7hcfUGpKG7&format=png&color=000000"
+                alt="profile " />
+        </button>
+        <div id="profileDropdown"
+            class="hidden absolute right-0 mt-14 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1">
+            <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+            <button onclick="showPopUp()" class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                Logout
+            </button>
+        </div>
+        <div class="md:hidden block bg-gray-100 rounded-full p-2 z-50">
+            <input id="checkbox2" type="checkbox" class="hidden" />
+            <label class="toggle toggle2" for="checkbox2" onclick="toggleSidebar()">
+                <div id="bar4" class="bars"></div>
+                <div id="bar5" class="bars"></div>
+                <div id="bar6" class="bars"></div>
+            </label>
+        </div>
+    </div>
+</header>
+{% endblock header %} {% block content %}
+
+<div class="font-extrabold px-4 w-fit mx-auto  text-2xl text-gray-700 mt-4">All Tickets</div>
+<div class="p-4">
+    <!-- <h2 class="text-xl font-bold text-gray-900 mb-4"> Collected tickets </h2> -->
+    <div class="font-semibold px-4 text-lg text-gray-700 "> Open tickets </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for ticket in tickets %}
+        {% if not ticket.resolved %}
+        <div class="bg-white p-4 border-2 border-gray-300 group active:scale-[1.02] transform hover:border-red-300 rounded-lg shadow-lg  transform transition-all duration-200 ease-in-out hover:shadow-red-500/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
+            <a href="{% url 'ticket_details' ticket.ticket_id %}" class="flex-grow flex flex-col justify-between">
+                <div class="overflow-y-hidden">
+                    <div class="font-normal flex gap-2">
+                        <div class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-red-700">{{ ticket.ticket_title }}</div>
+                        <div class="flex flex-row gap-2 items-center">
+                            {% if not ticket.resolved %}
+                            <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
+                                <p>Open</p>
+                            </div>
+                            {% else %}
+                            <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
+                                Resolved
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-gray-600">
+                        Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
+                    </div>
+                    <div class="text-xs mt-0 text-gray-500 tracking-wide">
+                        {% if ticket.created_at is not None %}
+                        {{ ticket.created_at }}
+                        {% endif %}
+                    </div>
+                    <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        {{ ticket.ticket_description }}
+                    </div>
+                    {% if ticket.image %}
+                    <div class="w-fit mb-4">
+                        <a target="_blank" href="{{ ticket.image.url }}">
+                            <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
+                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+            <div class="flex mt-4 justify-between">
+                <a href="{% url 'ticket_details' ticket.ticket_id %}"
+                    class="border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold rounded-md shadow-xl">
+                    See in Detail
+                </a>
+                {% if not ticket.resolved and user.is_superadmin %}
+                <form action="{% url 'resolve_ticket' ticket.ticket_id %}" class="flex" method="POST">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="text-white bg-blue-500 font-semibold w-fit text-sm rounded px-3 shadow-xl shadow-blue-500/20 hover:bg-green-500">
+                        Mark as Resolved
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- solved  -->
+    <div class="font-semibold px-4 text-lg text-gray-700 mt-8"> Solved tickets </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ">
+        {% for ticket in tickets %}
+        {% if ticket.resolved %}
+        <div class="bg-slate-200 p-4 border-2 border-gray-300 group active:scale-[1.02] transform  hover:border-green-600 rounded-lg shadow-lg  transform transition-all duration-300 ease-in-out hover:shadow-green-300/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
+            <a href="{% url 'ticket_details' ticket.ticket_id %}" class="flex-grow flex flex-col justify-between">
+                <div class="overflow-y-hidden">
+                    <div class="font-normal flex gap-2">
+                        <div class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-green-700">{{ ticket.ticket_title }}</div>
+                        <div class="flex flex-row gap-2 items-center">
+                            {% if not ticket.resolved %}
+                            <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
+                                <p>Open</p>
+                            </div>
+                            {% else %}
+                            <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
+                                Resolved
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-gray-600">
+                        Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
+                    </div>
+                    <div class="text-xs mt-0 text-gray-500 tracking-wide">
+                        {% if ticket.created_at is not None %}
+                        {{ ticket.created_at }}
+                        {% endif %}
+                    </div>
+                    <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        {{ ticket.ticket_description }}
+                    </div>
+                    {% if ticket.image %}
+                    <div class="w-fit mb-4">
+                        <a target="_blank" href="{{ ticket.image.url }}">
+                            <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
+                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+            <div class="flex mt-4 justify-between">
+                <a href="{% url 'ticket_details' ticket.ticket_id %}"
+                    class="border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold rounded-md shadow-xl">
+                    See in Detail
+                </a>
+                {% if not ticket.resolved and user.is_superadmin %}
+                <form action="{% url 'resolve_ticket' ticket.ticket_id %}" class="flex" method="POST">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="text-white bg-blue-500 font-semibold w-fit text-sm rounded px-3 shadow-xl shadow-blue-500/20 hover:bg-green-500">
+                        Mark as Resolved
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- Popup -->
+        <div class="fixed inset-0 hidden z-50 bg-gray-800 bg-opacity-75 flex items-center justify-center ticket-popup"
+            id="ticket-popup-{{ ticket.ticket_id }}">
+            <div class="bg-white rounded-lg overflow-hidden w-5/6 lg:w-2/4 h-4/5 p-6 relative">
+                <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 close-popup"
+                    data-ticket-id="{{ ticket.ticket_id }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div class="ticket-details-content overflow-y-auto h-full" id="ticket-details-{{ ticket.ticket_id }}">
+                    <!-- Ticket details and comments will be loaded here -->
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock content %}

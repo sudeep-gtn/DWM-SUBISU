@@ -97,53 +97,56 @@
                 </form>
             </div>
         </div>
+        
         {% endif %}
 
+        
         <div>
-            <h2 class="text-xl font-bold text-gray-900 mb-4"> Collected tickets </h2>
-            <div class="font-semibold px-4 text-lg text-gray-700 "> Open tickets </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- <h2 class="text-xl font-bold text-gray-900 mb-4"> Collected tickets </h2> -->
+            <div class="font-semibold px-4 text-lg text-gray-700 "> Recent open tickets </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
                 {% for ticket in tickets %}
                 {% if not ticket.resolved %}
-                <div class="bg-white p-4 border-2 border-red-300 rounded-lg shadow-md overflow-hidden h-56 flex flex-col justify-between">
-                    <div class="overflow-y-hidden flex-grow">
-                        <div class="font-normal flex gap-2">
-                            <div class="text-lg text-gray-900 font-semibold truncate">{{ ticket.ticket_title }}</div>
-                            <div class="flex flex-row gap-2 items-center">
-                                {% if not ticket.resolved %}
-                                <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
-                                    <p>Open</p>
+                
+                <div class="bg-white p-4 border-2 border-gray-300 group active:scale-[1.02] transform hover:border-red-300 rounded-lg shadow-lg  transform transition-all duration-300 ease-in-out hover:shadow-red-500/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
+                    <a href="{% url 'ticket_details' ticket.ticket_id %}" class="flex-grow flex flex-col justify-between">
+                        <div class="overflow-y-hidden">
+                            <div class="font-normal flex gap-2">
+                                <div class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-red-700">{{ ticket.ticket_title }}</div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    {% if not ticket.resolved %}
+                                    <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
+                                        <p>Open</p>
+                                    </div>
+                                    {% else %}
+                                    <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
+                                        Resolved
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% else %}
-                                <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
-                                    Resolved
-                                </div>
+                            </div>
+                            <div class="text-gray-600">
+                                Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
+                            </div>
+                            <div class="text-xs mt-0 text-gray-500 tracking-wide">
+                                {% if ticket.created_at is not None %}
+                                {{ ticket.created_at }}
                                 {% endif %}
                             </div>
-                        </div>
-                        <div class="text-gray-600">
-                            Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
-                        </div>
-                        <div class="text-xs mt-0 text-gray-500 tracking-wide">
-                            {% if ticket.created_at is not None %}
-                            {{ ticket.created_at }}
+                            <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                                {{ ticket.ticket_description }}
+                            </div>
+                            {% if ticket.image %}
+                            <div class="w-fit mb-4">
+                                <a target="_blank" href="{{ ticket.image.url }}">
+                                    <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
+                                        <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                                    </div>
+                                </a>
+                            </div>
                             {% endif %}
                         </div>
-                        <div class="text-gray-500 my-4  text-sm font-medium overflow-hidden overflow-ellipsis h-16">
-                            {{ ticket.ticket_description }}
-                        </div>
-                        {% if ticket.image %}
-                        <div class="w-fit mb-4 ">
-                            <a target="_blank" href="{{ ticket.image.url }}">
-                                <div
-                                    class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                    <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
-                                    attachment
-                                </div>
-                            </a>
-                        </div>
-                        {% endif %}
-                    </div>
+                    </a>
                     <div class="flex mt-4 justify-between">
                         <a href="{% url 'ticket_details' ticket.ticket_id %}"
                             class="border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold rounded-md shadow-xl">
@@ -160,57 +163,66 @@
                         {% endif %}
                     </div>
                 </div>
+                
                 {% endif %}
                 {% endfor %}
             </div>
-            
+            {% if ticket_count > 7 %}
+            <div class="flex justify-center mt-8">
+                <a href="/tickets"
+                    class="active:scale-105 transform text-gray-500 flex items-center gap-1  justify-center transition-all duration-200 px-1 hover:text-black hover:border-gray-900 font-semibold  border-b-2 border-gray-400">
+                    See All Tickets <img src="/static/images/redirect.png" height="12" width="12" alt="redirect">
+                </a>
+            </div>
+            {% endif %}
+
 
 
 
             <!-- solved  -->
-            <div class="font-semibold px-4 text-lg text-gray-700 mt-8"> Solved tickets </div>
+            <div class="font-semibold px-4 text-lg text-gray-700 mt-8"> Recent solved tickets </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for ticket in tickets %}
                 {% if ticket.resolved %}
-                <div class="bg-slate-200 p-4 border-2 border-gray-400 rounded-lg shadow-md overflow-hidden h-56 flex flex-col justify-between">
-                    <div class="overflow-y-hidden flex-grow">
-                        <div class="font-normal flex gap-2">
-                            <div class="text-lg text-gray-900 font-semibold truncate">{{ ticket.ticket_title }}</div>
-                            <div class="flex flex-row gap-2 items-center">
-                                {% if not ticket.resolved %}
-                                <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
-                                    <p>Open</p>
+                <div class="bg-slate-200 p-4 border-2 border-gray-300 group active:scale-[1.02] transform hover:border-green-600 rounded-lg shadow-lg  transform transition-all duration-300 ease-in-out hover:shadow-green-300/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
+                    <a href="{% url 'ticket_details' ticket.ticket_id %}" class="flex-grow flex flex-col justify-between">
+                        <div class="overflow-y-hidden">
+                            <div class="font-normal flex gap-2">
+                                <div class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-green-700">{{ ticket.ticket_title }}</div>
+                                <div class="flex flex-row gap-2 items-center">
+                                    {% if not ticket.resolved %}
+                                    <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
+                                        <p>Open</p>
+                                    </div>
+                                    {% else %}
+                                    <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
+                                        Resolved
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% else %}
-                                <div class="text-white flex items-center bg-green-600 w-14 text-xs rounded px-1">
-                                    Resolved
-                                </div>
+                            </div>
+                            <div class="text-gray-600">
+                                Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
+                            </div>
+                            <div class="text-xs mt-0 text-gray-500 tracking-wide">
+                                {% if ticket.created_at is not None %}
+                                {{ ticket.created_at }}
                                 {% endif %}
                             </div>
-                        </div>
-                        <div class="text-gray-600">
-                            Posted by: <span class="font-medium">{{ ticket.user.full_name }}</span>
-                        </div>
-                        <div class="text-xs mt-0 text-gray-500 tracking-wide">
-                            {% if ticket.created_at is not None %}
-                            {{ ticket.created_at }}
+                            <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                                {{ ticket.ticket_description }}
+                            </div>
+                            {% if ticket.image %}
+                            <div class="w-fit mb-4">
+                                <a target="_blank" href="{{ ticket.image.url }}">
+                                    <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
+                                        <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                                    </div>
+                                </a>
+                            </div>
                             {% endif %}
                         </div>
-                        <div class="text-gray-500 my-4  text-sm font-medium overflow-hidden overflow-ellipsis h-16">
-                            {{ ticket.ticket_description }}
-                        </div>
-                        {% if ticket.image %}
-                        <div class="w-fit mb-4 ">
-                            <a target="_blank" href="{{ ticket.image.url }}">
-                                <div
-                                    class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                    <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
-                                    attachment
-                                </div>
-                            </a>
-                        </div>
-                        {% endif %}
-                    </div>
+                    </a>
                     <div class="flex mt-4 justify-between">
                         <a href="{% url 'ticket_details' ticket.ticket_id %}"
                             class="border-2 border-gray-400 hover:border-black hover:text-black text-gray-600 active:scale-110 transform transition-all duration-200 px-3 text-sm font-semibold rounded-md shadow-xl">
@@ -248,6 +260,14 @@
                 {% endif %}
                 {% endfor %}
             </div>
+            {% if ticket_count > 7 %}
+            <div class="flex justify-center mt-8">
+                <a href="/tickets"
+                    class="active:scale-105 transform text-gray-500 flex items-center gap-1  justify-center transition-all duration-200 px-1 hover:text-black hover:border-gray-900 font-semibold  border-b-2 border-gray-400">
+                    See All Tickets <img src="/static/images/redirect.png" height="12" width="12" alt="redirect">
+                </a>
+            </div>
+            {% endif %}
 
         </div>
     </section>

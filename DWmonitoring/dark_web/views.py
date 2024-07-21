@@ -1,3 +1,4 @@
+from html import escape
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -9,6 +10,9 @@ from cybernews.cybernews import CyberNews
 from dateutil import parser
 from django.http import HttpResponse, HttpResponseBadRequest
 from weasyprint import HTML
+from django.templatetags.static import static
+
+
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -18,6 +22,7 @@ from django.conf import settings
 from wkhtmltopdf.views import PDFTemplateResponse
 from xhtml2pdf import pisa
 import io
+from datetime import datetime
 import os
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -51,7 +56,6 @@ class DomainView(LoginRequiredMixin, View):
     login_url = "login"
     
     def get(self, request):
-
         # Domain.objects.create(
         #     name='example.com',
         #     domain_ip='192.168.1.1',
@@ -521,14 +525,22 @@ class IncidentResponse(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         if user.is_superadmin or user.is_org_admin:
-            tickets = Ticket.objects.all().order_by('-created_at')
+            open_tickets = Ticket.objects.filter(resolved=False).order_by('-created_at')
+            closed_tickets = Ticket.objects.filter(resolved=True).order_by('-created_at')
         else:
             open_tickets = Ticket.objects.filter(user=user, resolved=False).order_by('-created_at')
-            closed_tickets = Ticket.objects.filter(resolved=True).order_by('-created_at')
-            tickets = list(open_tickets) + list(closed_tickets)
+            closed_tickets = Ticket.objects.filter(user=user, resolved=True).order_by('-created_at')
         
-        return render(request, 'incidentResponse.html', {'tickets': tickets})
-    
+        ticket_count = open_tickets.count() + closed_tickets.count()
+        print("ticket count " , ticket_count)
+        # Display up to 3 open tickets and up to 6 closed tickets
+        open_tickets = open_tickets[:3]
+        closed_tickets = closed_tickets[:6]
+        
+        # Combine the open and closed tickets
+        tickets = list(open_tickets) + list(closed_tickets)
+
+        return render(request, 'incidentResponse.html', {'tickets': tickets, 'ticket_count': ticket_count})
     def post(self, request):
         ticket_title = request.POST.get('ticket_title')
         ticket_description = request.POST.get('ticket_description')
@@ -567,11 +579,35 @@ class LiveThreatMap(LoginRequiredMixin, View):
         return render(request, "liveThreatMap.html")
     
 
-from datetime import datetime
 
 class GenerateReportView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'report_template.html')
+
+
+    def link_callback(uri, rel):
+        """
+        Convert HTML URIs to absolute system paths so xhtml2pdf can access those resources.
+        """
+        # Use Django's staticfiles finders to locate the file
+        sUrl = settings.STATIC_URL                # Typically /static/
+        sRoot = settings.STATIC_ROOT          # Typically /home/userX/project_static/
+        mUrl = settings.MEDIA_URL             # Typically /media/
+        mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+        bRoot = settings.BASE_DIR              # Project's base directory
+        if uri.startswith(mUrl):
+            path = os.path.join(mRoot, uri.replace(mUrl, ""))
+        elif uri.startswith(sUrl):
+            path = os.path.join(sRoot, uri.replace(sUrl, ""))
+        else:
+            return os.path.join(bRoot, '../', uri)
+
+        # make sure that file exists
+        if not os.path.isfile(path):
+            raise Exception(
+                'media URI must start with %s or %s' % (sUrl, mUrl)
+            )
+        return path
 
     def post(self, request, *args, **kwargs):
         filters = request.POST.getlist('filters')
@@ -589,6 +625,8 @@ class GenerateReportView(View):
         pii = []
         stealer_logs = []
         black_market = []
+        tickets = []
+
 
         # Fetch data from the database
         if 'domain-leaks' in filters:
@@ -613,22 +651,40 @@ class GenerateReportView(View):
             black_market = BlackMarket.objects.all()
             if date_from and date_to:
                 black_market = black_market.filter(discovery_date__range=(date_from, date_to))
-            
+        if 'tickets' in filters : 
+            tickets = Ticket.objects.all()
+            if date_from and date_to : 
+                tickets = tickets.filter(discovery_date__range=(date_from, date_to))
 
-        print("domain with filter: ", domains)
-        print("cards with filter: ", cards)
-        print("pii with filter: ", pii)
-
+        # print("domain with filter: ", domains)
+        # print("cards with filter: ", cards)
+        # print("pii with filter: ", pii)
+        print("Tickets : " ,tickets)
         context = {
             'domains': domains,
             'cards': cards,
             'pii': pii,
             'stealer_log':stealer_logs,
-            'black_market': black_market
+            'black_market': black_market , 
+            'tickets' : tickets
         }
+        html_string = render_to_string('report_template.html', context)
+        
+    #     html_string = html_string.replace(
+    #     '{% static \'images/logo-green1.png\' %}', escape(static('images/logo-green1.png'))
+    # )
+        # pdf = HTML(string=html_string).write_pdf()
 
-        # Render the HTML template with the data
-        # html_string = render_to_string('report_template.html', context)
+        # response = HttpResponse(pdf, content_type='application/pdf')
+        # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+
+        result = io.BytesIO()
+        pdf = pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), result, link_callback=GenerateReportView.link_callback)
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type='application/pdf')
+        return HttpResponse('We had some errors <pre>' + escape(html_string) + '</pre>')   
+
+        '''
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="dwm-report.pdf"'
         buffer = io.BytesIO()
@@ -694,22 +750,17 @@ class GenerateReportView(View):
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
+        '''
         # Convert the rendered HTML to PDF
-        # html = HTML(string=html_string)
-        # pdf = html.write_pdf()
-
-
-        # Create a response with the PDF
-        # response = HttpResponse(pdf, content_type='application/pdf')
-        # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+       
         return response
     
-    def generate_pdf(self, html_string):
-        result = io.BytesIO()
-        pdf = pisa.CreatePDF(io.StringIO(html_string), dest=result)
-        if pdf.err:
-            return None
-        return result.getvalue()
+    # def generate_pdf(self, html_string):
+    #     result = io.BytesIO()
+    #     pdf = pisa.CreatePDF(io.StringIO(html_string), dest=result)
+    #     if pdf.err:
+    #         return None
+    #     return result.getvalue()
 
 
 class PreviewReportView(View):
@@ -797,6 +848,7 @@ class TicketsView(View):
 #         # context['form'] = CommentForm()
 #         return context
 
+# details about a specfic ticket, includes comments 
 class TicketDetailView(DetailView):
     model = Ticket
     template_name = 'ticket_details.html'
@@ -809,6 +861,22 @@ class TicketDetailView(DetailView):
         # print("Context : ", context)
         return context
 
+class AllTickets(LoginRequiredMixin,View):
+    login_url = 'login'
+    def get(self, request):
+        user = request.user
+        if user.is_superadmin or user.is_org_admin:
+            open_tickets = Ticket.objects.filter(resolved=False).order_by('-created_at')
+            closed_tickets = Ticket.objects.filter(resolved=True).order_by('-created_at')
+        else:
+            open_tickets = Ticket.objects.filter(user=user, resolved=False).order_by('-created_at')
+            closed_tickets = Ticket.objects.filter(user=user, resolved=True).order_by('-created_at')
+        
+        ticket_count = open_tickets.count() + closed_tickets.count()
+
+        tickets = list(open_tickets) + list(closed_tickets)
+        return render(request, 'allTickets.html', {'tickets': tickets})
+    
 # class AddCommentView(LoginRequiredMixin, View):
 #     def post(self, request, pk):
 #         ticket = get_object_or_404(Ticket, pk=pk)

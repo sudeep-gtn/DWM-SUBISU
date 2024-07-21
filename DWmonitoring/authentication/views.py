@@ -238,3 +238,5 @@ class ContactPageView(View):
 class NoPermissionView(View) :
     def get(self, request):
         return HttpResponse("403 Forbidden")
+    
+
