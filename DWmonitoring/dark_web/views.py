@@ -11,6 +11,7 @@ from dateutil import parser
 from django.http import HttpResponse, HttpResponseBadRequest
 from weasyprint import HTML
 from django.templatetags.static import static
+from django.utils.dateparse import parse_date
 
 
 from django.template.loader import render_to_string
@@ -780,6 +781,7 @@ class PreviewReportView(View):
         pii = []
         black_market = []
         stealer_log = []
+        tickets = []
         # Fetch data from the database
         if 'domain-leaks' in filters:
             domains = Domain.objects.all()
@@ -805,6 +807,10 @@ class PreviewReportView(View):
             # if date_from and date_to:
             #     black_market = black_market.filter(discovery_date__range=(date_from, date_to))
             
+        if 'tickets' in filters : 
+            tickets = Ticket.objects.all()
+            if date_from and date_to : 
+                tickets = tickets.filter(discovery_date__range=(date_from, date_to))
 
         print("domain with filter: ", domains)
         print("cards with filter: ", cards)
@@ -816,7 +822,8 @@ class PreviewReportView(View):
             'cards': cards,
             'pii': pii,
             'black_market':black_market,
-            'stealer_log':stealer_log
+            'stealer_log':stealer_log,
+            'tickets':tickets
         }
 
         # Render the template for preview
@@ -833,6 +840,8 @@ class TicketsView(View):
             return HttpResponseBadRequest("Invalid Ticket ID")
         
         ticket.resolved = True
+        ticket.resolved_date = datetime.now()
+
         ticket.save()
         return redirect('incident-response')
 
@@ -860,11 +869,14 @@ class TicketDetailView(DetailView):
 
         # print("Context : ", context)
         return context
-
-class AllTickets(LoginRequiredMixin,View):
+class AllTickets(LoginRequiredMixin, View):
     login_url = 'login'
+    
     def get(self, request):
         user = request.user
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
         if user.is_superadmin or user.is_org_admin:
             open_tickets = Ticket.objects.filter(resolved=False).order_by('-created_at')
             closed_tickets = Ticket.objects.filter(resolved=True).order_by('-created_at')
@@ -872,11 +884,22 @@ class AllTickets(LoginRequiredMixin,View):
             open_tickets = Ticket.objects.filter(user=user, resolved=False).order_by('-created_at')
             closed_tickets = Ticket.objects.filter(user=user, resolved=True).order_by('-created_at')
         
-        ticket_count = open_tickets.count() + closed_tickets.count()
+        if start_date:
+            start_date_parsed = parse_date(start_date)
+            open_tickets = open_tickets.filter(created_at__gte=start_date_parsed)
+            closed_tickets = closed_tickets.filter(created_at__gte=start_date_parsed)
+        
+        if end_date:
+            end_date_parsed = parse_date(end_date)
+            open_tickets = open_tickets.filter(created_at__lte=end_date_parsed)
+            closed_tickets = closed_tickets.filter(created_at__lte=end_date_parsed)
 
+        ticket_count = open_tickets.count() + closed_tickets.count()
         tickets = list(open_tickets) + list(closed_tickets)
-        return render(request, 'allTickets.html', {'tickets': tickets})
-    
+        open_tickets = list(open_tickets)
+        closed_tickets = list(closed_tickets)
+        
+        return render(request, 'allTickets.html', {'tickets': tickets, 'ticket_count': ticket_count, 'open_tickets':open_tickets, 'closed_tickets':closed_tickets})
 # class AddCommentView(LoginRequiredMixin, View):
 #     def post(self, request, pk):
 #         ticket = get_object_or_404(Ticket, pk=pk)

@@ -37,17 +37,42 @@
 {% endblock header %} {% block content %}
 
 <div class="font-extrabold px-4 w-fit mx-auto  text-2xl text-gray-700 mt-4">All Tickets</div>
+<form method="GET" action="{% url 'tickets' %}" class="mb-4 mt-3  flex items-center justify-center">
+    <div class="flex items-center">
+        <div class="mr-4">
+            <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+            <input type="date" id="start_date" name="start_date"
+                class="mt-1 block w-full border-2  border-gray-400 text-gray-800 px-3 outline-none rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value="{{ request.GET.start_date }}" required>
+        </div>
+        <div class="mr-4">
+            <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+            <input type="date" id="end_date" name="end_date"
+                class="mt-1 block w-full border-2  border-gray-400 text-gray-800 px-3 outline-none rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value="{{ request.GET.end_date }}" required>
+        </div>
+        <div class="mt-6">
+            <button type="submit" class="bg-red-500 text-white px-4 py-1  rounded-md shadow-sm hover:bg-red-700">
+                Apply
+            </button>
+        </div>
+    </div>
+</form>
 <div class="p-4">
     <!-- <h2 class="text-xl font-bold text-gray-900 mb-4"> Collected tickets </h2> -->
-    <div class="font-semibold px-4 text-lg text-gray-700 "> Open tickets </div>
+    {% if open_tickets %}
+    <div class="font-extrabold px-4 text-xl text-gray-600 "> Open tickets </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {% for ticket in tickets %}
         {% if not ticket.resolved %}
-        <div class="bg-white p-4 border-2 border-gray-300 group active:scale-[1.02] transform hover:border-red-300 rounded-lg shadow-lg  transform transition-all duration-200 ease-in-out hover:shadow-red-500/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
+        <div
+            class="bg-white p-4 border-2 border-gray-300 group active:scale-[1.02] transform hover:border-red-300 rounded-lg shadow-lg  transform transition-all duration-200 ease-in-out hover:shadow-red-500/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
             <a href="{% url 'ticket_details' ticket.ticket_id %}" class="flex-grow flex flex-col justify-between">
                 <div class="overflow-y-hidden">
                     <div class="font-normal flex gap-2">
-                        <div class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-red-700">{{ ticket.ticket_title }}</div>
+                        <div
+                            class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-red-700">
+                            {{ ticket.ticket_title }}</div>
                         <div class="flex flex-row gap-2 items-center">
                             {% if not ticket.resolved %}
                             <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
@@ -68,14 +93,17 @@
                         {{ ticket.created_at }}
                         {% endif %}
                     </div>
-                    <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                    <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16"
+                        style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
                         {{ ticket.ticket_description }}
                     </div>
                     {% if ticket.image %}
                     <div class="w-fit mb-4">
                         <a target="_blank" href="{{ ticket.image.url }}">
-                            <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                            <div
+                                class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline  flex items-center justify-center gap-1 hover:bg-gray-200">
+                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment">
+                                {{ ticket.image.url|cut:"/media/ticket_images/" }}
                             </div>
                         </a>
                     </div>
@@ -100,18 +128,32 @@
         </div>
         {% endif %}
         {% endfor %}
+
+        {% else %}
+        <div class="">
+            <div class="font-semibold text-red-500 px-4 rounded w-fit flex items-center gap-2"> <img
+                    src="/static/images/not-found.svg" width="22" height="22" alt="not-found"> No open tickets found !
+            </div>
+        </div>
+        {% endif %}
+
+
     </div>
 
     <!-- solved  -->
+    {% if closed_tickets %}
     <div class="font-semibold px-4 text-lg text-gray-700 mt-8"> Solved tickets </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ">
         {% for ticket in tickets %}
         {% if ticket.resolved %}
-        <div class="bg-slate-200 p-4 border-2 border-gray-300 group active:scale-[1.02] transform  hover:border-green-600 rounded-lg shadow-lg  transform transition-all duration-300 ease-in-out hover:shadow-green-300/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
+        <div
+            class="bg-slate-200 p-4 border-2 border-gray-300 group active:scale-[1.02] transform  hover:border-green-600 rounded-lg shadow-lg  transform transition-all duration-300 ease-in-out hover:shadow-green-300/20 shadow-gray-400/40 overflow-hidden h-62 flex flex-col justify-between">
             <a href="{% url 'ticket_details' ticket.ticket_id %}" class="flex-grow flex flex-col justify-between">
                 <div class="overflow-y-hidden">
                     <div class="font-normal flex gap-2">
-                        <div class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-green-700">{{ ticket.ticket_title }}</div>
+                        <div
+                            class="text-lg text-gray-900 font-semibold truncate transition-all duration-300 ease-linear group-hover:text-green-700">
+                            {{ ticket.ticket_title }}</div>
                         <div class="flex flex-row gap-2 items-center">
                             {% if not ticket.resolved %}
                             <div class="text-white bg-yellow-600 w-fit text-xs rounded px-1 mt-1">
@@ -132,14 +174,17 @@
                         {{ ticket.created_at }}
                         {% endif %}
                     </div>
-                    <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                    <div class="text-gray-500 my-4 text-sm font-medium overflow-hidden h-16"
+                        style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
                         {{ ticket.ticket_description }}
                     </div>
                     {% if ticket.image %}
                     <div class="w-fit mb-4">
                         <a target="_blank" href="{{ ticket.image.url }}">
-                            <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                            <div
+                                class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex items-center justify-center gap-1 hover:bg-gray-200">
+                                <img src="/static/images/attachment.png" width="15" height="15" alt="attachment">
+                                {{ ticket.image.url|cut:"/media/ticket_images/" }}
                             </div>
                         </a>
                     </div>
@@ -182,7 +227,13 @@
         </div>
         {% endif %}
         {% endfor %}
+        {% else %}
+        <div class=" mt-16">
+            <div class="mx-4 font-semibold text-red-500 px-4 rounded w-fit flex items-center gap-2"> <img
+                    src="/static/images/not-found.svg" width="22" height="22" alt="not-found"> No any closed tickets
+                found ! </div>
+        </div>
+        {% endif %}
     </div>
-
 </div>
 {% endblock content %}

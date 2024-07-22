@@ -139,8 +139,8 @@
                             {% if ticket.image %}
                             <div class="w-fit mb-4">
                                 <a target="_blank" href="{{ ticket.image.url }}">
-                                    <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                        <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                                    <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex items-center justify-center gap-1 hover:bg-gray-200">
+                                        <img src="/static/images/attachment.png" width="16" height="16" alt="attachment">  {{ ticket.image.url|cut:"/media/ticket_images/" }}
                                     </div>
                                 </a>
                             </div>
@@ -215,8 +215,8 @@
                             {% if ticket.image %}
                             <div class="w-fit mb-4">
                                 <a target="_blank" href="{{ ticket.image.url }}">
-                                    <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200">
-                                        <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1 attachment
+                                    <div class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex items-center justify-center gap-1 hover:bg-gray-200">
+                                        <img src="/static/images/attachment.png" width="16" height="16" alt="attachment">   {{ ticket.image.url|cut:"/media/ticket_images/" }}
                                     </div>
                                 </a>
                             </div>
@@ -275,7 +275,7 @@
     <div>
         <div class="px-6 mt-4">
             <div class="text-xl font-semibold">
-                Integration With Security Infrastructure -
+               Security Event and Incident Management -
                 <span class="text-red-600">SIEM</span>
             </div>
             <div class="flex w-fit gap-4  text-sm mt-2">

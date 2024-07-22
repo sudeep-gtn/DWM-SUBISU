@@ -63,12 +63,12 @@
         </div>
         <p class="text-gray-500 py-3">{{ ticket.ticket_description }}</p>
         {% if ticket.image %}
-        <div class="max-w-[200px]">
+        <div class="w-fit  ">
             <a target="_blank" href="{{ ticket.image.url }}">
                 <div
-                    class="text-base py-1 border border-gray-400 px-2 bg-gray-100 rounded underline flex gap-1 hover:bg-gray-200 ">
-                    <img src="/static/images/attachment.png" width="13" height="13" alt="attachment"> 1
-                    attachment
+                    class="text-base py-1 border border-gray-400 px-4 bg-gray-100 rounded underline flex items-center justify-center  gap-1 hover:bg-gray-200 ">
+                    <img src="/static/images/attachment.png" width="16" height="16" alt="attachment"> 
+                    {{ ticket.image.url|cut:"/media/ticket_images/" }}
                 </div>
             </a>
         </div>
@@ -100,13 +100,13 @@
                 placeholder="Start typing ...." required></textarea>
             <button type="submit"
                 class="bg-gray-500 flex items-center justify-center  w-1/3 text-white rounded p-2 hover:bg-gray-700 ">Submit
-                <img src="/static/images/send.svg" width="18" height="14" alt=""></button>
+                <img src=" /static/images/send.svg" width="18" height="14" alt=""></button>
         </form>
         {% else %}
-        <div class="bg-gray-200 px-6 py-2 text-red-600 w-fit mt-4 rounded-md font-semibold"> This ticket has been closed  </div>
+        <div class="bg-gray-200 px-6 py-2 text-red-600 w-fit flex items-center gap-3 mt-4 rounded-md font-semibold"> This ticket has been closed ! {% if ticket.resolved_date %} <div class="text-gray-600 text-sm font-normal"> ( on {{ ticket.resolved_date }} )</div> {% endif %} </div>
         {% endif %}
 
-        {% if not ticket.resolved %}
+        {% if not ticket.resolved  and user.is_superadmin and user.is_org_admin %}
         <form action="{% url 'resolve_ticket' ticket.ticket_id %}" class="flex mt-4" method="POST">
             {% csrf_token %}
             <button type="submit"

@@ -95,6 +95,7 @@ class Ticket(models.Model):
     image = models.ImageField(upload_to='ticket_images/', blank=True, null=True)
     resolved = models.BooleanField(default=False)
 
+    resolved_date = models.DateTimeField(null=True ,blank=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Linking to CustomUser
 
