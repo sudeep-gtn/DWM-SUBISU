@@ -50,98 +50,146 @@
 {% block content %}
 
 <main class="mt-3 ">
-    <div class="text-gray-600 font-semibold text-center w-4/5 mx-auto  py-4 px-2 mb-8"> Here, you'll find comprehensive
-        insights and detailed reports
-        generated from our continuous monitoring of dark web activities. Explore various metrics, trends, and detailed
-        reports to gain a deeper understanding of the dark web landscape and ensure your organization's security.
-    </div>
-
-    <div class="my-6 flex flex-col lg:flex-row gap-4 items-center justify-center">
-        <div
-            class="shadow-xl border-2 border-orange-400 w-fit  lg:w-[800px] h-fit lg:h-[300px] object-cover  rounded-lg overflow-hidden">
-            <img class="transform hover:scale-110 transition-all duration-200 ease-linear" src="/static/images/map.png"
-                height="100" width="1200" alt="">
+    <div class="bg-white ">
+        <div id="particles-js" class="absolute top-0 left-0 w-full h-full z-20"></div>
+        <div class="text-gray-600 font-semibold text-center w-4/5 mx-auto  py-4 px-2"> Here, you'll find
+            comprehensive
+            insights and detailed reports
+            generated from our continuous monitoring of dark web activities. Explore various metrics, trends, and
+            detailed
+            reports to gain a deeper understanding of the dark web landscape and ensure your organization's security.
         </div>
-        <div class="flex flex-col  gap-4 w-5/6 lg:w-1/3">
-            <p class="text-gray-600">A real-time map of the computer security attacks that are going on at any given
-                time. Cyber-attack maps are valuable tools that give information on how to stay ahead of attacks.</p>
-            <a class="flex items-center" href="{% url 'live-threatmap' %}"><button
-                    class="bg-red-600 transition-all duration-300 ease-in-out text-white px-6 py-3 mx-auto my-6 font-semibold hover:bg-gray-300 hover:text-black rounded-lg w-fit">
-                    View Threatmap </button></a>
+
+        <div class="py-6 flex flex-col lg:flex-row gap-4 items-center justify-center">
+            <div
+                class="shadow-xl border-2 border-orange-400 w-fit  lg:w-[800px] h-fit lg:h-[300px] object-cover  rounded-lg overflow-hidden">
+                <img class="transform hover:scale-110 transition-all duration-200 ease-linear"
+                    src="/static/images/map.png" height="100" width="1200" alt="">
+            </div>
+            <div class="flex flex-col  gap-4 w-5/6 lg:w-1/3">
+                <p class="text-gray-600">A real-time map of the computer security attacks that are going on at any given
+                    time. Cyber-attack maps are valuable tools that give information on how to stay ahead of attacks.
+                </p>
+                <a class="flex items-center" href="{% url 'live-threatmap' %}"><button
+                        class="bg-red-600 transition-all duration-300 ease-in-out text-white px-6 py-3 mx-auto my-6 font-semibold hover:bg-gray-300 hover:text-black rounded-lg w-fit">
+                        View Threatmap </button></a>
+            </div>
         </div>
     </div>
     <!-- Export to PDF -->
 
-    <div class="mt-4 mb-14 pb-6 flex flex-col justify-between items-center w-full bg-white text-center  p-4 ">
-        <div class="font-semibold text-red-600  text-2xl mb-3 ">Generate Report </div>
+    <div class="pt-4 mb-14 pb-6 flex flex-col justify-between items-center w-full bg-gray-200 text-center  p-4 ">
+        <div class="font-extrabold text-red-600  text-2xl mb-3 ">Generate Report </div>
         <p class="text-gray-500 text-gray-500 font-semibold">Access your reports offline! Click the button below to
             download a PDF containing comprehensive reports and analysis.
         </p>
         <span class="font-semibold text-red-700 py-4 "> Select what should be included in report </span>
         <form id="report-form" action="{% url 'generate_report' %}" method="post">
             {% csrf_token %}
-            <div class="py-3 mb-4 px-4 bg-white text-sm rounded-lg border-2 border-red-400 flex flex-wrap items-center justify-between mx-auto w-full shadow-md">
-                <label class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200 border-red-400">
+            <div
+                class="py-3 mb-4 px-4 bg-gray-100 text-sm rounded-lg border-2 border-red-400 flex flex-wrap items-center justify-between mx-auto w-full shadow-md">
+                <label
+                    class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200 border-red-400">
                     <input type="checkbox" class="type-checkbox" name="filters" value="domain-leaks">
                     <span class="ml-2">Domain Leaks</span>
                 </label>
-                <label class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
                     <input type="checkbox" class="type-checkbox" name="filters" value="pii-leaks">
                     <span class="ml-2">PII leaks</span>
                 </label>
-                <label class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
                     <input type="checkbox" class="type-checkbox" name="filters" value="black_market">
                     <span class="ml-2">Black Market</span>
                 </label>
-                <label class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
                     <input type="checkbox" class="type-checkbox" name="filters" value="stealer_logs">
                     <span class="ml-2">Stealer logs</span>
                 </label>
-                <label class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
                     <input type="checkbox" class="type-checkbox" name="filters" value="tickets">
-                    <span class="ml-2">  Raised Tickets </span>
+                    <span class="ml-2"> Raised Tickets </span>
                 </label>
             </div>
             <div class="flex items-center justify-center gap-6 mb-4">
                 <div>
                     <label for="date_from" class="text-sm font-semibold text-gray-700">From</label>
                     <input type="date" id="date_from" name="date_from"
-                           class="mt-1 w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                        class="mt-1 w-full px-3 py-2 bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
                 <div>
                     <label for="date_to" class="block text-sm font-semibold text-gray-700">To</label>
                     <input type="date" id="date_to" name="date_to"
-                           class="mt-1 block w-full px-3 py-2 bg-white border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                        class="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
             </div>
-            <div class="flex items-center justify-between gap-6 mt-8">
-                <button type="button" id="preview-btn" class="border-2 font-semibold text-gray-600 hover:bg-red-300 transition-all flex gap-2 items-center duration-300 ease-in-out hover:text-gray-900 border-gray-400 hover:border-red-600 text-gray-800 px-6 py-2 w-fit rounded-md">
-                    Preview report
+            <div class="flex items-center justify-center gap-6 mt-8">
+                <button type="button" id="preview-btn"
+                    class="border-2 font-semibold text-gray-600 hover:bg-red-300 transition-all flex gap-2 items-center duration-300 ease-in-out hover:text-gray-900 border-gray-400 hover:border-red-600 text-gray-800 px-6 py-2 w-fit rounded-md">
+                    Generate report
                 </button>
-                <button type="submit" id="export-btn" class="border-2 font-semibold text-gray-600 hover:bg-red-300 transition-all flex gap-2 items-center duration-300 ease-in-out hover:text-gray-900 border-gray-400 hover:border-red-600 text-gray-800 px-6 py-2 w-fit rounded-md">
+                <!-- <button type="submit" id="export-btn" class="border-2 font-semibold text-gray-600 hover:bg-red-300 transition-all flex gap-2 items-center duration-300 ease-in-out hover:text-gray-900 border-gray-400 hover:border-red-600 text-gray-800 px-6 py-2 w-fit rounded-md">
                     <img src="/static/images/export.svg" height="20" width="20" alt="export"> Export as PDF
-                </button>
+                </button> -->
             </div>
         </form>
 
     </div>
 
-    
+
 
 </main>
 <script>
-     document.getElementById('preview-btn').addEventListener('click', function() {
+    document.getElementById('preview-btn').addEventListener('click', function () {
         const form = document.getElementById('report-form');
         form.method = 'get';
         form.action = "{% url 'preview-report' %}";
         form.submit();
     });
 
-    document.getElementById('export-btn').addEventListener('click', function() {
+    document.getElementById('export-btn').addEventListener('click', function () {
         const form = document.getElementById('report-form');
         form.method = 'post';
         form.action = "{% url 'generate_report' %}";
         form.submit();
     });
+    particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 20,
+                    density: {
+                        enable: true,
+                        value_area: 800,
+                    },
+                },
+                color: {
+                    value: "#92a91a",
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000",
+                    },
+                    polygon: {
+                        nb_sides: 5,
+                    },
+                },
+                size: {
+                    value: 3, // Adjust the size of particles here
+                },
+                interactivity: {
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: "repulse",
+                        },
+                    },
+                },
+            },
+        });
 </script>
 {% endblock content %}

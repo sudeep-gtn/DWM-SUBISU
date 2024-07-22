@@ -669,7 +669,6 @@ class GenerateReportView(View):
             'black_market': black_market , 
             'tickets' : tickets
         }
-        html_string = render_to_string('report_template.html', context)
         
     #     html_string = html_string.replace(
     #     '{% static \'images/logo-green1.png\' %}', escape(static('images/logo-green1.png'))
@@ -679,11 +678,13 @@ class GenerateReportView(View):
         # response = HttpResponse(pdf, content_type='application/pdf')
         # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
 
+        html_string = render_to_string('report_template.html', context)
         result = io.BytesIO()
         pdf = pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), result, link_callback=GenerateReportView.link_callback)
         if not pdf.err:
             return HttpResponse(result.getvalue(), content_type='application/pdf')
         return HttpResponse('We had some errors <pre>' + escape(html_string) + '</pre>')   
+        # return response
 
         '''
         response = HttpResponse(content_type='application/pdf')
@@ -754,7 +755,6 @@ class GenerateReportView(View):
         '''
         # Convert the rendered HTML to PDF
        
-        return response
     
     # def generate_pdf(self, html_string):
     #     result = io.BytesIO()
@@ -810,7 +810,7 @@ class PreviewReportView(View):
         if 'tickets' in filters : 
             tickets = Ticket.objects.all()
             if date_from and date_to : 
-                tickets = tickets.filter(discovery_date__range=(date_from, date_to))
+                tickets = tickets.filter(created_at__range=(date_from, date_to))
 
         print("domain with filter: ", domains)
         print("cards with filter: ", cards)
