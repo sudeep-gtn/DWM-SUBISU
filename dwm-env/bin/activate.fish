@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/sudeep/Documents/Dark-Web-Monitoring_SUBISU/dwm-env"
+set -gx VIRTUAL_ENV "/home/the_sudeep/Documents/greentick/DWM-SUBISU/dwm-env"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

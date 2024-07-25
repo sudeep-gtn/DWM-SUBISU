@@ -9,7 +9,6 @@ from collections import defaultdict
 from cybernews.cybernews import CyberNews
 from dateutil import parser
 from django.http import HttpResponse, HttpResponseBadRequest
-from weasyprint import HTML
 from django.templatetags.static import static
 from django.utils.dateparse import parse_date
 
@@ -20,16 +19,11 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import DetailView
 from django.core.mail import send_mail
 from django.conf import settings
-from wkhtmltopdf.views import PDFTemplateResponse
-from xhtml2pdf import pisa
+
 import io
 from datetime import datetime
 import os
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph,Spacer
-from reportlab.pdfgen import canvas
+
 
 
 class DashboardView(LoginRequiredMixin, View):

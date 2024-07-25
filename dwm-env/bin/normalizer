@@ -1,4 +1,4 @@
-#!/home/sudeep/Documents/Dark-Web-Monitoring_SUBISU/dwm-env/bin/python3
+#!/home/the_sudeep/Documents/greentick/DWM-SUBISU/dwm-env/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
