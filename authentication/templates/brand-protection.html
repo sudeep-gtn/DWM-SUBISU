@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% block title %}Brand Protection{% endblock title %}
+
+{% block header %}
+<style>
+    .toggle-icon {
+        transition: transform 0.3s;
+    }
+
+    .rotate-180 {
+        transform: rotate(180deg);
+    }
+</style>
+<script>
+    function toggleDetails(id, iconId) {
+        const element = document.getElementById(id);
+        const icon = document.getElementById(iconId);
+        element.classList.toggle('hidden');
+        icon.classList.toggle('rotate-180');
+    }
+</script>
+
+<header class="shadow-md py-2 px-4 flex justify-between items-center z-50">
+    <a href="{% url 'brand-protection'%}" class="text-xl font-extrabold text-gray-700">
+        <span class="text-red-500"> Brand</span> <span class="text-[#92a91a]"> Monitoring </span>
+    </a>
+    <div class="relative flex gap-4 px-4">
+        <a href="{% url 'notifications' %}"
+            class="w-full rounded-md  border-gray-200{% if request.path == '/notifications' %} border-b-2 border-red-600 {% endif %} flex justify-center items-center">
+
+        </a>
+
+
+        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon">
+        <button
+            class="hidden md:block border-2 border-gray-400 bg-gray-100 rounded-full p-3 {% if request.path == '/profile' %} border-red-600 {% endif %}"
+            onclick="toggleDropdown('profileDropdown')">
+            <img height="45" width="45" src="https://img.icons8.com/?size=100&id=fJ7hcfUGpKG7&format=png&color=000000"
+                alt="profile " />
+        </button>
+
+        <div id="profileDropdown"
+            class="hidden absolute right-0 mt-14 w-48 bg-white border border-gray-200 z-50 rounded-md shadow-lg py-1">
+            <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+            <button onclick="showPopUp()"
+                class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</button>
+        </div>
+        <!-- menu for mobile view -->
+        <div class="md:hidden block  bg-gray-100 rounded-full p-2  z-50">
+            <input id="checkbox2" type="checkbox" class="hidden">
+            <label class="toggle toggle2" for="checkbox2" onclick="toggleSidebar()">
+                <div id="bar4" class="bars"></div>
+                <div id="bar5" class="bars"></div>
+                <div id="bar6" class="bars"></div>
+            </label>
+        </div>
+    </div>
+</header>
+{% endblock header %}
+
+{% block content %}
+<div>
+    <div class="container mx-auto p-4 z-20">
+        <div class="text-2xl font-extrabold mb-6 text-center"><span class="text-pink-700">Brand Monitoring</span>
+            Dashboard</div>
+
+        <div class="flex flex-wrap -mx-2">
+            <!-- Brand Mentions Monitoring -->
+            <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
+                <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
+                    <h2 class="text-lg text-gray-800 font-semibold mb-2">Brand Mentions</h2>
+                    <div class="mb-2 flex items-center gap-3">
+                        <div
+                            class="bg-gradient-to-r from-blue-400 to-red-500 flex items-center justify-center h-28 w-28 rounded-full ">
+                            <div
+                                class="bg-white h-24 w-24 rounded-full flex items-center justify-center text-4xl text-blue-800 font-bold">
+                                546
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div class="text-lg font-semibold text-gray-700"> total mentions </div>
+                        </div>
+                    </div>
+                    <svg id="iconBrandMentions" class="toggle-icon absolute top-6 right-6 cursor-pointer"
+                        onclick="toggleDetails('brandMentions', 'iconBrandMentions')" xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div id="brandMentions" class="hidden text-sm mt-4">
+                        <p class="text-md">Tracking keywords and brand name variations.</p>
+                        <a href="#" class="underline text-blue-800"> See details </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Counterfeit Detection -->
+            <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
+                <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
+                    <h2 class="text-lg text-gray-800 font-semibold mb-2">Online Reputation</h2>
+                    <div class="mb-2 flex justify-between">
+                        <div>
+                            <div class="text-3xl font-semibold"> 50 <span class="text-base">%</span> </div>
+                            <span class="text-sm text-gray-700"> Positive reputation </span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-semibold text-red-600"> 30 <span class="text-base">%</span> </h1>
+                            <span class="text-sm text-gray-700"> Negative reputation </span>
+                        </div>
+                    </div>
+                    <svg id="iconCounterfeitDetection" class="toggle-icon absolute top-6 right-6 cursor-pointer"
+                        onclick="toggleDetails('counterfeitDetection', 'iconCounterfeitDetection')"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div id="counterfeitDetection" class="hidden text-sm flex flex-col gap-3 mt-4">
+                        <div> A tweet from a customer complaining about slow internet speeds:
+                            <div class="bg-gray-200 px-3 rounded-lg w-fit">@ISP my internet is crawling today! What's
+                                going on?</div>
+                        </div>
+                        <div>
+                            A positive review on a tech blog praising the ISP's customer service:
+                            <div class="bg-gray-200 px-3 rounded-lg w-fit ">ISP has the best customer support I've ever
+                                experienced. They fixed my issue in no time!</div>
+
+                        </div>
+                        <div>
+                            A news article reporting on a potential data breach at the ISP.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Data Leaks and Compromised Accounts -->
+            <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
+                <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
+                    <h2 class="text-lg text-gray-800 font-semibold mb-2"> Social Media </h2>
+                    <div class="mb-4 flex flex-col justify-center">
+                        <h1  class="text-gray-900 text-3xl font-bold">45</h1>
+                        <span class="text-sm text-gray-700">listings detected</span>
+                    </div>
+                    <svg id="iconDataLeaks" class="toggle-icon absolute top-6 right-6 cursor-pointer"
+                        onclick="toggleDetails('dataLeaks', 'iconDataLeaks')" xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div id="dataLeaks" class="hidden flex flex-col gap-3 text-sm mt-4">
+                        <div class=""> A Facebook post from a competitor offering a promotional discount to switch ISPs.
+                        </div>
+                        <div>A LinkedIn discussion about the ISP's new fiber optic network expansion. </div>
+                        <div> A customer complaint on Instagram about a billing error. </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Intellectual Property Protection -->
+            <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
+                <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
+                    <h2 class="text-lg text-gray-800 font-semibold mb-2">Copyright/Trademark</h2>
+                    <div class="mb-2 flex flex-col gap-2 ">
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span
+                                class="font-extrabold">1675 </span> listings detected </div>
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span
+                                class="font-extrabold">234 </span> actions Taken </div>
+
+                    </div>
+                    <svg id="iconIPProtection" class="toggle-icon absolute top-6 right-6 cursor-pointer"
+                        onclick="toggleDetails('ipProtection', 'iconIPProtection')" xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div id="ipProtection" class="flex flex-col text-sm gap-3 hidden mt-4">
+                        <div class="text-md bg-gray-200 px-3 "> A social media account impersonating the ISP and
+                            spreading false information. </div>
+                        <div class="text-md bg-gray-200 px-3 ">An unauthorized website using the ISP's logo and branding
+                            to sell fake products.</div>
+                        <div class="text-md bg-gray-200 px-3 "> A competitor using the ISP's tagline in their
+                            advertising campaign.</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Executive Protection -->
+            <div class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
+                <div class="bg-gray-100 border-2 border-pink-300 p-6 rounded-lg shadow-lg relative">
+                    <h2 class="text-lg text-gray-800 font-semibold mb-2">Phishing/Scam</h2>
+                    <div class="mb-2 flex flex-col gap-3">
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span
+                                class="font-extrabold">75 </span> listings detected </div>
+                        <div class="border-2 border-gray-300 rounded w-full  px-4 shadow-md py-1"><span
+                                class="font-extrabold">34 </span> actions Taken </div>
+                    </div>
+                    <svg id="iconExecutiveProtection" class="toggle-icon absolute top-6 right-6 cursor-pointer"
+                        onclick="toggleDetails('executiveProtection', 'iconExecutiveProtection')"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-chevron-down">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <div id="executiveProtection" class=" flex text-sm flex-col gap-3 hidden mt-4">
+                        <div class="text-md px-3 bg-gray-200"> A phone call from a scammer impersonating an ISP
+                            representative and offering a fake discount. </div>
+                        <div class="text-md px-3 bg-gray-200">A phishing email claiming to be from the ISP, asking for
+                            login credentials. </div>
+                        <div class="text-md px-3 bg-gray-200"> A fake website imitating the ISP's login page to steal
+                            customer data. </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            <div class="h-full w-full"> <img src="/static/images/brand-protection copy.png" alt=""></div>
+            <div class="h-full w-full"> <img src="/static/images/brand-protection1.png" alt=""> </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

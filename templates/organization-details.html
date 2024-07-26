@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Organization Details{% endblock title %}
+
+{% block content %}
+<h1 class="text-center pb-14 pt-4 font-bold text-2xl ">Organizational <span class="text-red-600">Details</span> </h1>
+<div class="pl-6 items-center justify-center mx-auto xl:items-start flex flex-col w-fit xl:w-4/5 ">
+    <div class="flex flex-col md:flex-row gap-2 w-full justify-around">
+        <div>
+            <div class="flex border-b-4 border-gray-300 w-fit  pb-4  gap-4 ">
+                <div class="border-4 border-red-500 w-fit rounded-full p-4 "> <img src="/static/images/organization.png"
+                        width="50" height="50" alt="organization-logo"> </div>
+                <div class="flex-col ">
+                    <h1 class="font-semibold text-lg ">ABC Nepal Pvt. Ltd. </h1>
+                    <p class="font-medium text-gray-800"> Gyaneshwor, Kathmandu </p>
+                    <span class="text-gray-600 text-sm"> Monitoring since : <time> 24 March, 2023 </time> </span>
+
+                </div>
+            </div>
+            <div class="border-b-4 border-gray-300 flex flex-col gap-4 mt-4 w-fit pb-4">
+                <div class="flex gap-2 items-center  "> <span><img src="/static/images/organization (1).png" width="24"
+                            height="24" alt="name"></span> Organization Name : <span class="font-semibold"> ABC Nepal
+                        Pvt.
+                        Ltd.
+                    </span> </div>
+                <div class="flex gap-2 items-center font text-base  "> <span><img src="/static/images/location.png"
+                            width="24" height="24" alt="address"></span> Address : <span class="font-semibold">
+                        Gyaneshwor,
+                        Kathmandu,
+                        Nepal </span> </div>
+                <div class="flex gap-2 items-center "> <img src="/static/images/estd.png" height="24" width="24"
+                        alt="estd">
+                    Established on : <span class="font-semibold"> 12 March, 2011 </span> </div>
+                <div class="flex gap-2 items-center "> <img src="/static/images/time.png" height="24" width="24"
+                        alt="estd">
+                    Monitoring since : <span class="font-semibold"> 12 March, 2011 </span> </div>
+            </div>
+        </div>
+        <div>
+            <div class="w-fit shadow-2xl w-full border-2 border-gray-400 overflow-hidden"> <img src="/static/images/emp1.jpg" height="200" width="300" alt="org"></div>
+        </div>
+    </div>
+
+    <div class="mt-4 ">
+        <h1 class="font-semibold text-lg"> Active Users </h1>
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="border-2 border-red-300 p-4 rounded-md shadow-lg">
+                <span class="font-semibold text-lg "> Nirajan Acharya </span>
+                <div class="text-gray-500 text-sm"> Last login :  <span> 10:40 AM , May 10, 2024  </span> </div>
+            </div>
+            <div class="border-2 border-red-300 p-4 rounded-md shadow-lg">
+                <span class="font-semibold text-lg "> Shyam Kc </span>
+                <div class="text-gray-500 text-sm"> Last login : <span>10:40 AM ,May 10, 2024</span> </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% block title %}Black Market{% endblock title %}
+
+{% block content %}
+<div>
+
+  <h1 class="text-2xl w-fit mx-auto font-extrabold my-4 text-gray-700">Black Market <span class="text-red-600">
+      Insights</span> </h1>
+  <p class="text-gray-500 font-medium px-8 text-base ">Discover the latest trends and activities in dark web black
+    markets. Our advanced tools provide insights into illicit transactions, emerging threats, and underground market
+    dynamics. Stay informed with our comprehensive data and reports.</p>
+  <div class="flex items-center mt-4 justify-between mx-12 py-2 ">
+    <div class="flex flex-col items-center justify-center ">
+      <div class="mb-2 font-semibold text-gray-500 font-semibold"> Filter from <span
+          class="text-red-400 underline pr-2 ">discovery date</span> <a href="{% url 'black-market' %}"
+          class="font-normal bg-gray-200 cursor-pointer text-sm border-gray-400 border-2 px-2 rounded"> clear </a>
+      </div>
+      <form method="GET" enctype="multipart/form-data" class="flex gap-3 ">
+        {% csrf_token %}
+        <div class="bg-white border-red-300 border-2 flex gap-2 items-center px-4 py-1 rounded">
+          <label for="start_date" class="font-semibold"> From : </label>
+          <input class="bg-white  ouline-none rounded px-2 " type="date" name="start_date" id="start_date"
+            value="{{ request.GET.start_date }}">
+        </div>
+        <div class="bg-white border-red-300 border-2 flex gap-2 items-center px-4 py-1 rounded">
+          <label for="end_date" class="font-semibold"> To : </label>
+          <input class="bg-white  ouline-none rounded px-2 " type="date" name="end_date" id="end_date"
+            value="{{ request.GET.end_date }}">
+        </div>
+        <button type="submit"
+          class="bg-red-500 hover:bg-red-700 text-white px-3 border-2 border-red-600 rounded font-semibold"> Apply
+        </button>
+      </form>
+    </div>
+    {% if user.is_superadmin %}
+    <button onclick="showForm()"
+      class="mt-4 font-semibold text-gray-600 border shadow-lg hover:bg-gray-600 hover:text-white transition-all duration-300 ease-in-out active:scale-105 transform border-gray-500 bg-gray-300 rounded px-3 py-1 flex items-center gap-1">
+      <span class="text-xl">+</span> Add new record </button>
+    {% endif %}
+  </div>
+  {% if errors %}
+  <div class="my-4 px-6">
+    <ul class="list-disc list-inside text-red-600">
+      {% for error in errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  <div id="backgroundMask" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+  <div id="domainForm" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+
+    <div class="bg-gray-100 border-red-400 border-2 p-6 rounded-lg shadow-xl w-full max-w-lg">
+      <form method="POST" class="space-y-4" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!---------- domain name -------------------------------- -->
+        <div>
+          <label for="source " class="block text-sm font-medium text-gray-700"> Source </label>
+          <input type="text" id="source" name="source"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value="{{ post_data.source|default:'' }}" placeholder="eg. Black Market A " required/>
+        </div>
+        <!-- ------domain ip ---------------------------------->
+        <div>
+          <label for="log_preview" class="block text-sm font-medium text-gray-700"> Stealer log preview </label>
+          <input type="text" id="log_preview" name="log_preview"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value="{{ post_data.log_preview |default:'' }}" placeholder="Preview of different stolen data..."required />
+        </div>
+
+        <!--  breach date   -->
+        <div>
+          <label for="related_assets" class="block text-sm font-medium text-gray-700"> Related assests </label>
+          <input type="text" id="related_assets" name="related_assets"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value="{{ post_data.related_assets|default:'' }}" placeholder="eg. Credit cards, PII"required />
+        </div>
+
+        <div>
+          <label for="price" class="block text-sm font-medium text-gray-700"> Price </label>
+          <input type="number" id="price" name="price"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value="{{ post_data.price|default:'' }}" placeholder="eg. 120"required />
+        </div>
+
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700"> Status </label>
+         <select name="status" id="status"
+         required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          <option value="" {% if post_data.status|default:'' == '' %}selected{% endif %}>Select status</option>
+          <option value="Available" {% if post_data.status|default:'' == 'Available' %}selected{% endif %}>Available</option>
+          <option value="Sold" {% if post_data.status|default:'' == 'Sold' %}selected{% endif %}>Sold</option>
+          <option value="Unavailable" {% if post_data.status|default:'' == 'Unavailable' %}selected{% endif %}>Unavailable</option>
+        </select>
+        </div>
+
+
+        <div>
+          <label for="obtain_progress" class="block text-sm font-medium text-gray-700"> Obtain progress</label>
+          <input required type="number" id="obtain_progress" name="obtain_progress"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value="{{ post_data.obtain_progress|default:'' }}"
+            placeholder="Enter progress (1-100)" min="1" max="100" />
+        </div>
+        <div>
+          <label required for="discovery_date" class="block text-sm font-medium text-gray-700"> Discovery date </label>
+          <input type="date" id="discovery_date" name="discovery_date"
+          value="{{ post_data.discovery_date|default:'' }}"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+        </div>
+
+        <div>
+          <label for="incident" class="block text-sm font-medium text-gray-700"> Incident </label>
+          <input required type="text" id="incident" name="incident"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value="{{ post_data.incident|default:'' }}"
+            placeholder="eg. DB hacked..." />
+        </div>
+
+        <div class="flex justify-end">
+          <button type="button" onclick="hideForm()"
+            class="bg-red-200 text-red-600 px-4 py-2 rounded-lg mr-2 hover:bg-red-100">
+            Cancel
+          </button>
+          <button type="submit" class="inline-block bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+            Add record
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto shadow-lg border-2 border-gray-400 rounded-xl my-4  mx-4">
+    <div class=" overflow-y-auto border border-gray-200">
+      <table class=" min-w-full bg-white">
+        <thead class="bg-gray-100 text-gray-800">
+          <tr>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              ID</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              Source</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              Stealer log Preview </th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              RELATED ASSETS</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              PRICE </th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              STATUS</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              OBTAIN PROGRESS</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              DISCOVERY DATE</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              INCIDENT</th>
+            <th class="w-fit py-2 px-2  border-b-2 border-gray-400 text-left uppercase font-semibold text-sm">
+              <!-- ACTIONS</th> -->
+          </tr>
+        </thead>
+        <tbody class="text-gray-600">
+          {% if black_market_datas %}
+          {% for black_market_data in black_market_datas %}
+          <tr>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.id }}</td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.source }}</td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.stealer_log_preview }}</td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.related_assets }}</td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.price }}</td>
+            <td class="text-left py-2 px-2 w-fit ">
+              <span
+                class="bg-blue-200 px-2 rounded-lg w-fit text-sm text-gray-700 border border-blue-400 flex items-center">
+                {{ black_market_data.status }}
+              </span>
+            </td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.obtain_progress }}</td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.discovery_date }}</td>
+            <td class="text-left py-2 px-2 w-fit ">{{ black_market_data.incident }}</td>
+            <!-- <td class="text-left py-2 px-2 w-fit ">actions</td> -->
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="10" class="text-center py-2 px-2">No data found</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll(".close-popup").forEach((button) => {
+    button.addEventListener("click", function () {
+      const ticketId = this.getAttribute("data-ticket-id");
+      const popup = document.getElementById("ticket-popup-" + ticketId);
+      popup.classList.add("hidden");
+    });
+  });
+
+  function showForm() {
+    document.getElementById("domainForm").classList.remove("hidden");
+    document.getElementById("backgroundMask").classList.remove("hidden");
+  }
+
+  function hideForm() {
+    document.getElementById("domainForm").classList.add("hidden");
+    document.getElementById("backgroundMask").classList.add("hidden");
+  }
+</script>
+{% endblock content %}

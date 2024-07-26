@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% block title %} Stealer Logs {% endblock title %}
+
+{% block content %}
+
+
+<div class="">
+    <div class="dashboard py-4 text-center">
+        <h1 class="text-2xl font-bold"> <span class="text-red-600 ">Stealer Logs </span> Informations </h1>
+        <div class="mt-8  px-4 w-full lg:w-2/3 gap-4  flex items-center mx-auto justify-around">
+            <div class="shadow-lg w-1/3 bg-white flex flex-col gap-2 py-4 border-2 rounded-xl border-red-300">
+                <p class="text-3xl font-bold"> {{ stealer_log_counts }}</p>
+                <h2 class="text-gray-500">Total Logs</h2>
+            </div>
+            <form method="get" action="{% url 'stealer-logs' %}">
+                <label for="year">Select Year:</label>
+                <select name="year" id="year" onchange="updateChart()">
+                    {% for y in context.years %}
+                        <option value="{{ y }}" {% if y == context.selected_year %}selected{% endif %}> {{ y }} </option>
+                    {% endfor %}
+                </select>
+        
+            </form>
+            <div id="curve_chart" style="width: 500px; height: 300px"></div>
+        </div>
+    </div>
+    <h1 class="text-2xl w-fit mx-auto font-semibold my-4 text-gray-700">Stealer Log <span class="text-red-600">
+            Insights</span> </h1>
+    <div class="flex items-center mt-4 justify-between mx-12 py-2 ">
+        <div class="flex flex-col items-center justify-center ">
+            <div class="mb-2 font-semibold text-gray-500 font-semibold"> Filter from <span
+                    class="text-red-400 underline pr-2 ">discovery date</span> <a href="{% url 'black-market' %}"
+                    class="font-normal bg-gray-200 cursor-pointer text-sm border-gray-400 border-2 px-2 rounded"> clear
+                </a>
+            </div>
+            <form method="GET" enctype="multipart/form-data" class="flex gap-3 ">
+                {% csrf_token %}
+                <div class="bg-white border-red-300 border-2 flex gap-2 items-center px-4 py-1 rounded">
+                    <label for="start_date" class="font-semibold"> From : </label>
+                    <input class="bg-white  ouline-none rounded px-2 " type="date" name="start_date" id="start_date"
+                        value="{{ request.GET.start_date }}">
+                </div>
+                <div class="bg-white border-red-300 border-2 flex gap-2 items-center px-4 py-1 rounded">
+                    <label for="end_date" class="font-semibold"> To : </label>
+                    <input class="bg-white  ouline-none rounded px-2 " type="date" name="end_date" id="end_date"
+                        value="{{ request.GET.end_date }}">
+                </div>
+                <button type="submit"
+                    class="bg-red-500 hover:bg-red-700 text-white px-3 border-2 border-red-600 rounded font-semibold">
+                    Apply
+                </button>
+            </form>
+        </div>
+        {% if user.is_superadmin %}
+        <button onclick="showForm()"
+            class="mt-4 font-semibold text-gray-600 border shadow-lg hover:bg-gray-600 hover:text-white transition-all duration-300 ease-in-out active:scale-105 transform border-gray-500 bg-gray-300 rounded px-3 py-1 flex items-center gap-1">
+            <span class="text-xl">+</span> Add new record </button>
+        {% endif %}
+    </div>
+    {% if errors %}
+    <div class="my-4 px-6">
+        <ul class="list-disc list-inside text-red-600">
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div id="backgroundMask" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+    <div id="domainForm" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+
+        <div class="bg-gray-100 border-red-400 border-2 p-6 rounded-lg shadow-xl w-full max-w-lg">
+            <form method="POST" class="space-y-4" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div>
+                    <label for="date_detected " class="block text-sm font-medium text-gray-700"> Date detected </label>
+                    <input type="date" id="date_detected" name="date_detected"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value="{{ post_data.date_detected|default:'' }}" placeholder="eg. John Doe " />
+                </div>
+                <div>
+                    <label for="data_type" class="block text-sm font-medium text-gray-700"> Data type </label>
+                    <input type="text" id="data_type" name="data_type"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value="{{ post_data.data_type |default:'' }}" placeholder="eg. john.doe@example.com" />
+                </div>
+
+                <div>
+                    <label for="source" class="block text-sm font-medium text-gray-700"> Source </label>
+                    <input type="text" id="source" name="source"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value="{{ post_data.source|default:'' }}" placeholder="eg. Malware XYZ" />
+                </div>
+
+                <div>
+                    <label for="details" class="block text-sm font-medium text-gray-700"> Breach date </label>
+                    <textarea placeholder="Describe about the log...."
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        cols="60" rows="5" name="details" id="details"></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="button" onclick="hideForm()"
+                        class="bg-red-200 text-red-600 px-4 py-2 rounded-lg mr-2 hover:bg-red-100">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="inline-block bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                        Add record
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class=" rounded-lg border-2 border-gray-300 shadow-md mx-4  my-6 overflow-x-auto overflow-y-auto">
+        <div class="flex justify-between">
+            <!-- <input type="text" placeholder="Search..." class="p-2 border rounded w-1/3"> -->
+            <!-- <button class="p-2 bg-blue-500 text-white rounded">Export</button> -->
+        </div>
+        <table class="min-w-full bg-white rounded-lg">
+            <thead class="border-b-2 border-gray-300 bg-gray-200">
+                <tr>
+                    <th class="py-2 px-4 border-b">Log ID</th>
+                    <th class="py-2 px-4 border-b">Date Detected</th>
+                    <th class="py-2 px-4 border-b">Data Type</th>
+                    <th class="py-2 px-4 border-b">Source</th>
+                    <th class="py-2 px-4 border-b">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if stealer_logs %}
+                {% for stealer_log in stealer_logs %}
+                <tr>
+                    <td class="py-2 px-4 border-b text-center">{{stealer_log.log_id}}</td>
+                    <td class="py-2 px-4 border-b text-center">{{stealer_log.date_detected}}</td>
+                    <td class="py-2 px-4 border-b text-center">{{stealer_log.data_type}}</td>
+                    <td class="py-2 px-4 border-b text-center">{{stealer_log.source}}</td>
+                    <td class="py-2 px-4 border-b text-center">
+                        <button class="text-blue-500 flex items-center mx-auto text-center "
+                            onclick="toggleDetails('{{stealer_log.log_id}}')">
+                            Expand
+                            <svg width="24" height="24" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            </span>
+                        </button>
+                    </td>
+                </tr>
+                <tr id="{{stealer_log.log_id}}" class="hidden ">
+                    <td colspan="5" class="py-2 px-4">
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <!-- <h3 class="font-bold">Credentials</h3>
+                            <p><strong>URL:</strong> example.com</p>
+                            <p><strong>Username:</strong> user123</p>
+                            <p><strong>Password:</strong> ****</p>
+                            <h3 class="font-bold mt-2">Financial Info</h3>
+                            <p><strong>Credit Card:</strong> ****-****-****-1234</p>
+                            <p><strong>Expiry:</strong> 06/25</p>
+                            <h3 class="font-bold mt-2">Personal Info</h3>
+                            <p><strong>Email:</strong> user@example.com</p>
+                            <h3 class="font-bold mt-2">System Info</h3>
+                            <p><strong>OS:</strong> Windows 10</p>
+                            <p><strong>Hardware:</strong> Intel i7</p>
+                            <h3 class="font-bold mt-2">Files</h3>
+                            <p><a href="#" class="text-blue-500">View Screenshot</a></p>
+                            <p><a href="#" class="text-blue-500">Download Keylogger Data</a></p> -->
+                            {{stealer_log.details}}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% else %}
+                <tr>
+                    <td colspan="10" class="text-center py-2 px-2">No data found</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function toggleDetails(rowId) {
+            var element = document.getElementById(rowId);
+            element.classList.toggle("hidden");
+        }
+        document.querySelectorAll(".close-popup").forEach((button) => {
+            button.addEventListener("click", function () {
+                const ticketId = this.getAttribute("data-ticket-id");
+                const popup = document.getElementById("ticket-popup-" + ticketId);
+                popup.classList.add("hidden");
+            });
+        });
+
+        function showForm() {
+            document.getElementById("domainForm").classList.remove("hidden");
+            document.getElementById("backgroundMask").classList.remove("hidden");
+        }
+
+        function hideForm() {
+            document.getElementById("domainForm").classList.add("hidden");
+            document.getElementById("backgroundMask").classList.add("hidden");
+        }
+
+
+
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            const counts  = JSON.parse("{{ counts_json|escapejs|safe }}");
+
+            let  data = google.visualization.arrayToDataTable([
+                ['Month', 'Logs'],
+                ['Jan', counts[0] || 0],
+                ['Feb', counts[1] || 0],
+                ['Mar', counts[2] || 0],
+                ['Apr', counts[3] || 0],
+                ['May', counts[4] || 0],
+                ['Jun', counts[5] || 0],
+                ['Jul', counts[6] || 0],
+                ['Aug', counts[7] || 0],
+                ['Sep', counts[8] || 0],
+                ['Oct', counts[9] || 0],
+                ['Nov', counts[10] || 0],
+                ['Dec', counts[11] || 0]
+        ]);
+
+            var options = {
+                title: 'Log Detection Over Time',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            chart.draw(data, options);
+        }
+
+        function updateChart() {
+            var year = document.getElementById('year').value;
+            window.location.href = '?year=' + year;
+        }
+
+
+    </script>
+
+</div>
+{% endblock content %}

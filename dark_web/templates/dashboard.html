@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock title %}
+
+{% block content %}
+<div class="p-6">
+    <!-- Dashboard Section -->
+    <div class=" w-full mx-auto flex flex-col xl:flex-row justify-center gap-4 mb-6">
+        <!-- Domain Breaches -->
+
+        <div
+            class="border-2 border-red-200 w-full lg:w-1/2 hover:shadow-red-600/20 hover:shadow-2xl transition-all duration-300 ease-in-out bg-white flex gap-4 items-center justify-center p-4 rounded-md shadow-md">
+            <div
+                class=" bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center h-32 w-32 rounded-full ">
+                <div
+                    class="bg-white h-28 w-28 rounded-full flex items-center justify-center text-4xl text-red-600 font-bold">
+                    {{domains_count}}</div>
+            </div>
+            <!-- <div class="text-5xl text-red-600 font-bold">85</div> -->
+            <div class="w-1/3 flex flex-col gap-2 ">
+                <div class="text-gray-500 text-sm font-semibold">Domain breaches</div>
+                <a href="{% url 'domain' %}"
+                    class="text-sm hover:border-red-600 border-b-2 border-blue-400 transition-all duration-300 ease-in-out hover:text-red-600 text-blue-500 w-fit ">View
+                    Details</a>
+            </div>
+        </div>
+        <div
+            class="border-2 border-red-200 w-full lg:w-1/2 hover:shadow-red-600/20 hover:shadow-2xl transition-all duration-300 ease-in-out bg-white flex gap-8 items-center justify-center p-6 rounded-md shadow-md">
+            <div
+                class="w-3/4 bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center h-32 w-32 rounded-full ">
+                <div
+                    class="bg-white h-28 w-28 rounded-full flex items-center justify-center text-4xl text-red-600 font-bold">
+                    {{pii_exposures_count}}
+                </div>
+            </div>
+            <!-- <div class="text-5xl text-red-600 font-bold">85</div> -->
+            <div class="w-1/3 flex flex-col gap-2 ">
+                <div class="text-gray-500 text-sm font-semibold"> PII Exposures</div>
+                <a href="{% url 'pii-exposure' %}"
+                    class="text-sm hover:border-red-600  border-b-2 border-blue-400 transition-all duration-300 ease-in-out hover:text-red-600 text-blue-500 w-fit ">View
+                    Details</a>
+            </div>
+        </div>
+        <!-- Email Breaches -->
+        <div
+            class="border-2 border-red-200 w-full lg:w-1/2 hover:shadow-red-600/20 hover:shadow-2xl transition-all duration-300 ease-in-out bg-white flex gap-8 items-center justify-center p-6 rounded-md shadow-md">
+            <div
+                class="w-3/4 bg-gradient-to-r from-yellow-400 to-red-500 flex items-center justify-center h-32 w-32 rounded-full ">
+                <div
+                    class="bg-white h-28 w-28 rounded-full flex items-center justify-center text-4xl text-red-500 font-bold">
+                    {{stealer_logs_count}}</div>
+            </div>
+            <!-- <div class="text-5xl text-red-600 font-bold">85</div> -->
+            <div class="w-1/3 flex flex-col gap-2 ">
+                <div class="text-gray-500 text-sm font-semibold"> Stealer Log(s)</div>
+                <a href="{% url 'stealer-logs' %}"
+                    class="text-sm hover:border-red-600 border-b-2 border-blue-400 transition-all duration-300 ease-in-out hover:text-red-600 text-blue-500 w-fit ">View
+                    Details</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- charts  -->
+    <div class="flex gap-4 items-center justify-center flex-col xl:flex-row ">
+
+        <div
+            class="shadow-lg flex flex-col items-center justify-center rounded-lg  w-[340px] border-2  border-red-200 bg-white h-[340px]">
+            <h1 class="font-semibold text-sm text-gray-600 py-2">Organization Health Status</h1>
+            <div id="gauge-chart" class="w-[330px] h-[300px] md:h-[400px]"></div>
+        </div>
+        <!-- Severity Level and Data Distribution -->
+        <div class='w-[295px] mx-auto border-2 shadow-lg border-red-200 p-4 rounded-lg bg-white'>
+            <h1 class="font-semibold pb-2 w-fit text-sm text-gray-600 mx-auto text-center">Distribution of Data Breach
+                Severity Levels </h1>
+            <div class="chart-container ">
+                <canvas id="severityChart"></canvas>
+            </div>
+        </div>
+        <div
+            class='xl:w-[700px] w-fit border-2 flex flex-col items-center justify-center  shadow-lg border-red-200 p-4 rounded-lg bg-white'>
+            <h1 class="font-semibold py-2 text-sm text-gray-600 w-fit "> Total Logs and Breaches  </h1>
+            <div class="chart-container w-full">
+                <canvas id="breachCountChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div
+        class="mt-6 xl:w-[800px] text-gray-600 w-fit border-2 flex flex-col items-center justify-center  shadow-lg border-red-200 p-4 rounded-lg bg-white">
+        <h2 class="text-lg font-semibold mb-4"> Breach count in 2023 </h2>
+        <div class="w-full h-full rounded-lg shadow">
+            <h3 class="text font-semibold mb-2">Breach Dates Over Time</h3>
+            <canvas id="breachDateChart"></canvas>
+        </div>
+    </div>
+</div>
+<script>
+    function parseSafe(jsonString) {
+        try {
+            return JSON.parse(jsonString);
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            return {};
+        }
+    }
+    const totalSeverityCounts = {
+        // TODO: Replace with actual data from Django
+        'Low': 12,
+        'Medium': 32,
+        'High': 54
+    };
+    console.log('Total Low Severity Count:', totalSeverityCounts.Low);
+    console.log('Total Medium Severity Count:', totalSeverityCounts.Medium);
+    console.log('Total High Severity Count:', totalSeverityCounts.High);
+
+
+
+    const severityDataPieChart = {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{
+            data: [totalSeverityCounts.High, totalSeverityCounts.Medium, totalSeverityCounts.Low],
+            backgroundColor: ['#f22424', '#f0853e', '#ffbd08'],
+            hoverBackgroundColor: ['#c91010', '#d1501d', '#e8c02e']
+        }]
+    };
+    const severityConfig = {
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+        type: 'doughnut',
+        data: severityDataPieChart,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        },
+    };
+
+
+
+    // Severity counts data from Django
+    const severityCounts = {
+        'domain': {
+            'Low': parseSafe('{{ severity_counts.domain.Low }}'),
+            'Medium': parseSafe('{{ severity_counts.domain.Medium }}'),
+            'High': parseSafe('{{ severity_counts.domain.High }}')
+        },
+        'card': {
+            'Low': parseSafe('{{ severity_counts.card.Low }}'),
+            'Medium': parseSafe('{{ severity_counts.card.Medium }}'),
+            'High': parseSafe('{{ severity_counts.card.High }}')
+        },
+        'pii_exposure': {
+            'Low': parseSafe('{{ severity_counts.pii_exposure.Low }}'),
+            'Medium': parseSafe('{{ severity_counts.pii_exposure.Medium }}'),
+            'High': parseSafe('{{ severity_counts.pii_exposure.High }}')
+        }
+    };
+
+    const breachCountData = {
+        labels: ['stealer logs', 'Domains', 'PII'],
+        datasets: [{
+            backgroundColor: '#f0560a',
+            borderColor: '#bd2a17',
+            label: 'Leaks',
+            data: [1, 2, 5]
+        }
+        ]
+    };
+
+    const breachCountChartConfig = {
+        type: 'bar',
+        data: breachCountData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                title: {
+                    // display: true,
+                    // text: ''
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    };
+
+    window.onload = function () {
+        const severityCtx = document.getElementById('severityChart').getContext('2d');
+        new Chart(severityCtx, severityConfig);
+
+        const breachCountCtx = document.getElementById('breachCountChart').getContext('2d');
+        new Chart(breachCountCtx, breachCountChartConfig);
+    };
+
+
+    const health_score = parseSafe('{{ health_score | escapejs }}')
+    var myChart = echarts.init(document.getElementById('gauge-chart'));
+    var option = {
+        series: [{
+            type: 'gauge',
+            detail: {
+                show: true,
+                formatter: '{value}%',
+                fontSize: 20,
+                color: '#000'
+            },
+            data: [{ value: health_score, name: 'Health Status' }],
+            startAngle: 180,
+            endAngle: 0,
+            axisLine: {
+                lineStyle: {
+                    width: 20,
+                    color: [[0.2, '#f22424'], [0.7, '#f0853e'], [1, '#71E77D']]
+                }
+            },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            pointer: {
+                length: '70%',
+                width: 8,
+                color: 'auto'
+            }
+        }],
+        graphic: [
+            {
+                type: 'text',
+                left: '7%',
+                top: '30%',
+                style: {
+                    text: 'Poor',
+                    fill: '#f22424',
+                    font: 'bold 14px sans-serif'
+                }
+            },
+            {
+                type: 'text',
+                left: '45%',
+                top: '8%',
+                style: {
+                    text: 'Normal',
+                    fill: '#f0853e',
+                    font: 'bold 14px sans-serif'
+                }
+            },
+            {
+                type: 'text',
+                left: '85%',
+                top: '30%',
+                style: {
+                    text: 'Good',
+                    fill: '#71E77D',
+                    font: 'bold 14px sans-serif'
+                }
+            }
+        ]
+    };
+
+    myChart.setOption(option);
+
+    var ctx = document.getElementById('breachDateChart').getContext('2d');
+    var breachDateChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            datasets: [{
+                label: 'Domains Breached',
+                data: [1, 2, 1, 5, 9, 2, 4, 7, 3, 6, 8, 5],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+            }, {
+                label: 'Cards Breached',
+                data: [3, 4, 3, 6, 8, 5, 2, 9, 7, 4, 6, 3],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                fill: false,
+            }, {
+                label: 'PII Breached',
+                data: [2, 3, 1, 4, 5, 2, 6, 3, 8, 5, 4, 7],
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 2,
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+</script>
+
+
+{% endblock content %}

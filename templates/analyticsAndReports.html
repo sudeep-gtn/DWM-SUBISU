@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Analytics And Reports {% endblock title %}
+
+{% block header %}
+<header class="shadow-md py-2 px-4 flex justify-between items-center z-50">
+    <a href="{% url 'analytics-and-reports'%}" class="text-xl font-extrabold text-gray-700">
+        <div class="flex items-center gap-2 "> <img class="text-gray-300" src="/static/images/analytics-and-reports.png"
+                height="32" width="32" alt="overview"> Analytics and <span class="text-red-600"> Reports </span> </div>
+    </a>
+    <div class="relative flex gap-4 px-4">
+        <!-- <a href="{% url 'notifications' %}"
+          class="w-full rounded-md  border-gray-200{% if request.path == '/notifications' %} border-b-2 border-red-600 {% endif %} flex justify-center items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 50 50">
+            <path
+              d="M 25 0 C 22.800781 0 21 1.800781 21 4 C 21 4.515625 21.101563 5.015625 21.28125 5.46875 C 15.65625 6.929688 12 11.816406 12 18 C 12 25.832031 10.078125 29.398438 8.25 31.40625 C 7.335938 32.410156 6.433594 33.019531 5.65625 33.59375 C 5.265625 33.878906 4.910156 34.164063 4.59375 34.53125 C 4.277344 34.898438 4 35.421875 4 36 C 4 37.375 4.84375 38.542969 6.03125 39.3125 C 7.21875 40.082031 8.777344 40.578125 10.65625 40.96875 C 13.09375 41.472656 16.101563 41.738281 19.40625 41.875 C 19.15625 42.539063 19 43.253906 19 44 C 19 47.300781 21.699219 50 25 50 C 28.300781 50 31 47.300781 31 44 C 31 43.25 30.847656 42.535156 30.59375 41.875 C 33.898438 41.738281 36.90625 41.472656 39.34375 40.96875 C 41.222656 40.578125 42.78125 40.082031 43.96875 39.3125 C 45.15625 38.542969 46 37.375 46 36 C 46 35.421875 45.722656 34.898438 45.40625 34.53125 C 45.089844 34.164063 44.734375 33.878906 44.34375 33.59375 C 43.566406 33.019531 42.664063 32.410156 41.75 31.40625 C 39.921875 29.398438 38 25.832031 38 18 C 38 11.820313 34.335938 6.9375 28.71875 5.46875 C 28.898438 5.015625 29 4.515625 29 4 C 29 1.800781 27.199219 0 25 0 Z M 25 2 C 26.117188 2 27 2.882813 27 4 C 27 5.117188 26.117188 6 25 6 C 23.882813 6 23 5.117188 23 4 C 23 2.882813 23.882813 2 25 2 Z M 27.34375 7.1875 C 32.675781 8.136719 36 12.257813 36 18 C 36 26.167969 38.078125 30.363281 40.25 32.75 C 41.335938 33.941406 42.433594 34.6875 43.15625 35.21875 C 43.515625 35.484375 43.785156 35.707031 43.90625 35.84375 C 44.027344 35.980469 44 35.96875 44 36 C 44 36.625 43.710938 37.082031 42.875 37.625 C 42.039063 38.167969 40.679688 38.671875 38.9375 39.03125 C 35.453125 39.753906 30.492188 40 25 40 C 19.507813 40 14.546875 39.753906 11.0625 39.03125 C 9.320313 38.671875 7.960938 38.167969 7.125 37.625 C 6.289063 37.082031 6 36.625 6 36 C 6 35.96875 5.972656 35.980469 6.09375 35.84375 C 6.214844 35.707031 6.484375 35.484375 6.84375 35.21875 C 7.566406 34.6875 8.664063 33.941406 9.75 32.75 C 11.921875 30.363281 14 26.167969 14 18 C 14 12.261719 17.328125 8.171875 22.65625 7.21875 C 23.320313 7.707031 24.121094 8 25 8 C 25.886719 8 26.679688 7.683594 27.34375 7.1875 Z M 21.5625 41.9375 C 22.683594 41.960938 23.824219 42 25 42 C 26.175781 42 27.316406 41.960938 28.4375 41.9375 C 28.792969 42.539063 29 43.25 29 44 C 29 46.222656 27.222656 48 25 48 C 22.777344 48 21 46.222656 21 44 C 21 43.242188 21.199219 42.539063 21.5625 41.9375 Z">
+            </path>
+          </svg>
+        </a> -->
+
+
+        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon">
+        <button
+            class="hidden md:block border-2 border-gray-400 bg-gray-100 rounded-full p-2 {% if request.path == '/profile' %} border-red-600 {% endif %}"
+            onclick="toggleDropdown('profileDropdown')">
+            <img height="20" width="20" src="https://img.icons8.com/?size=100&id=fJ7hcfUGpKG7&format=png&color=000000"
+                alt="profile " />
+        </button>
+
+        <div id="profileDropdown"
+            class="hidden absolute right-0 mt-14 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1">
+            <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+            <button onclick="showPopUp()"
+                class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</button>
+        </div>
+        <!-- menu for mobile view -->
+        <div class="md:hidden block  bg-gray-100 rounded-full p-2  z-50">
+            <input id="checkbox2" type="checkbox" class="hidden">
+            <label class="toggle toggle2" for="checkbox2" onclick="toggleSidebar()">
+                <div id="bar4" class="bars"></div>
+                <div id="bar5" class="bars"></div>
+                <div id="bar6" class="bars"></div>
+            </label>
+        </div>
+    </div>
+</header>
+{% endblock header %}
+
+{% block content %}
+
+<main class="mt-3 ">
+    <div class="bg-white ">
+        <div class="text-gray-600 font-semibold text-center w-4/5 mx-auto  py-4 px-2"> Here, you'll find
+            comprehensive
+            insights and detailed reports
+            generated from our continuous monitoring of dark web activities. Explore various metrics, trends, and
+            detailed
+            reports to gain a deeper understanding of the dark web landscape and ensure your organization's security.
+        </div>
+
+        <div class="py-6 flex flex-col lg:flex-row gap-4 items-center justify-center">
+            <div
+                class="shadow-xl border-2 border-orange-400 w-fit  lg:w-[800px] h-fit lg:h-[300px] object-cover  rounded-lg overflow-hidden">
+                <img class="transform hover:scale-110 transition-all duration-200 ease-linear"
+                    src="/static/images/map.png" height="100" width="1200" alt="">
+            </div>
+            <div class="flex flex-col  gap-4 w-5/6 lg:w-1/3">
+                <p class="text-gray-600">A real-time map of the computer security attacks that are going on at any given
+                    time. Cyber-attack maps are valuable tools that give information on how to stay ahead of attacks.
+                </p>
+                <a class="flex items-center" href="{% url 'live-threatmap' %}"><button
+                        class="bg-red-600 transition-all duration-300 ease-in-out text-white px-6 py-3 mx-auto my-6 font-semibold hover:bg-gray-300 hover:text-black rounded-lg w-fit">
+                        View Threatmap </button></a>
+            </div>
+        </div>
+    </div>
+    <!-- Export to PDF -->
+
+    <div class="pt-4 mb-14 pb-6 flex flex-col justify-between items-center w-full bg-gray-200 text-center  p-4 ">
+        <div class="font-extrabold text-red-600  text-2xl mb-3 ">Generate Report </div>
+        <p class="text-gray-500 text-gray-500 font-semibold">Access your reports offline! Click the button below to
+            download a PDF containing comprehensive reports and analysis.
+        </p>
+        <span class="font-semibold text-red-700 py-4 "> Select what should be included in report </span>
+        <form id="report-form" action="{% url 'generate_report' %}" method="post">
+            {% csrf_token %}
+            <div
+                class="py-3 mb-4 px-4 bg-gray-100 text-sm rounded-lg border-2 border-red-400 flex flex-wrap items-center justify-between mx-auto w-full shadow-md">
+                <label
+                    class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200 border-red-400">
+                    <input type="checkbox" class="type-checkbox" name="filters" value="domain-leaks">
+                    <span class="ml-2">Domain Leaks</span>
+                </label>
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                    <input type="checkbox" class="type-checkbox" name="filters" value="pii-leaks">
+                    <span class="ml-2">PII leaks</span>
+                </label>
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                    <input type="checkbox" class="type-checkbox" name="filters" value="black_market">
+                    <span class="ml-2">Black Market</span>
+                </label>
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                    <input type="checkbox" class="type-checkbox" name="filters" value="stealer_logs">
+                    <span class="ml-2">Stealer logs</span>
+                </label>
+                <label
+                    class="inline-flex cursor-pointer text-left px-8 hover:text-red-500 font-semibold text-gray-700 transition-all duration-200">
+                    <input type="checkbox" class="type-checkbox" name="filters" value="tickets">
+                    <span class="ml-2"> Raised Tickets </span>
+                </label>
+            </div>
+            <div class="flex items-center justify-center gap-6 mb-4">
+                <div>
+                    <label for="date_from" class="text-sm font-semibold text-gray-700">From</label>
+                    <input type="date" id="date_from" name="date_from"
+                        class="mt-1 w-full px-3 py-2 bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="date_to" class="block text-sm font-semibold text-gray-700">To</label>
+                    <input type="date" id="date_to" name="date_to"
+                        class="mt-1 block w-full px-3 py-2 bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-6 mt-8">
+                <button type="button" id="preview-btn"
+                    class="border-2 font-semibold text-gray-600 hover:bg-red-300 transition-all flex gap-2 items-center duration-300 ease-in-out hover:text-gray-900 border-gray-400 hover:border-red-600 text-gray-800 px-6 py-2 w-fit rounded-md">
+                    Generate report
+                </button>
+                <!-- <button type="submit" id="export-btn" class="border-2 font-semibold text-gray-600 hover:bg-red-300 transition-all flex gap-2 items-center duration-300 ease-in-out hover:text-gray-900 border-gray-400 hover:border-red-600 text-gray-800 px-6 py-2 w-fit rounded-md">
+                    <img src="/static/images/export.svg" height="20" width="20" alt="export"> Export as PDF
+                </button> -->
+            </div>
+        </form>
+
+    </div>
+
+
+
+</main>
+<script>
+    document.getElementById('preview-btn').addEventListener('click', function () {
+        const form = document.getElementById('report-form');
+        form.method = 'get';
+        form.action = "{% url 'preview-report' %}";
+        form.submit();
+    });
+
+    document.getElementById('export-btn').addEventListener('click', function () {
+        const form = document.getElementById('report-form');
+        form.method = 'post';
+        form.action = "{% url 'generate_report' %}";
+        form.submit();
+    });
+    particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 20,
+                    density: {
+                        enable: true,
+                        value_area: 800,
+                    },
+                },
+                color: {
+                    value: "#92a91a",
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000",
+                    },
+                    polygon: {
+                        nb_sides: 5,
+                    },
+                },
+                size: {
+                    value: 3, // Adjust the size of particles here
+                },
+                interactivity: {
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: "repulse",
+                        },
+                    },
+                },
+            },
+        });
+</script>
+{% endblock content %}

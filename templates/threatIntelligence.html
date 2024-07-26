@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Threat Intelligence {% endblock title %}
+{% block header %}
+<header class="shadow-md py-2 px-4 flex justify-between items-center z-50">
+    <a href="{% url 'threat-intelligence'%}" class="text-xl font-extrabold text-gray-700">
+        <div class="flex items-center gap-2 "> <img class="text-gray-300" src="/static/images/threat-intelligence.svg"
+                height="32" width="32" alt="overview"> Threat <span class="text-red-600">Intelligence</span> </div>
+    </a>
+    <div class="relative flex gap-4 px-4">
+        <link rel="shortcut icon" href="/static/images/monitoring.png" type="image/x-icon">
+        <button
+            class="hidden md:block border-2 border-gray-400 bg-gray-100 rounded-full p-2 {% if request.path == '/profile' %} border-red-600 {% endif %}"
+            onclick="toggleDropdown('profileDropdown')">
+            <img height="20" width="20" src="https://img.icons8.com/?size=100&id=fJ7hcfUGpKG7&format=png&color=000000"
+                alt="profile " />
+        </button>
+
+        <div id="profileDropdown"
+            class="hidden absolute right-0 mt-14 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1">
+            <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+            <button onclick="showPopUp()"
+                class="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</button>
+        </div>
+        <!-- menu for mobile view -->
+        <div class="md:hidden block  bg-gray-100 rounded-full p-2  z-50">
+            <input id="checkbox2" type="checkbox" class="hidden">
+            <label class="toggle toggle2" for="checkbox2" onclick="toggleSidebar()">
+                <div id="bar4" class="bars"></div>
+                <div id="bar5" class="bars"></div>
+                <div id="bar6" class="bars"></div>
+            </label>
+        </div>
+    </div>
+</header>
+{% endblock header %}
+{% block content %}
+<!-- from intelligence.any.run -->
+
+
+<!-- <h1 class="text-lg font-bold mb-2 px-4 py-2  ">Threat Intelligence</h1> -->
+
+
+<div class="container mx-auto p-4">
+
+    <div class="text-gray-600 mt-4 w-fit mx-auto font-semibold">Search and filter threats</div>
+
+    <div class="mb-2 mt-2 flex gap-4 w-full md:w-5/6 items-center mx-auto">
+        <input type="text" id="search-input" placeholder="Search hashes..."
+            class="px-4 py-1 outline-none border-2 border-gray-300 focus:border-red-500 border shadow rounded-md w-full">
+        <button type="submit" class="bg-red-500 text-white py-1 px-6 shadow-lg rounded w-fit h-fit">Search</button>
+    </div>
+
+    <div
+        class="py-3 mb-4 px-6 bg-white rounded-lg border-2 border-gray-300 flex flex-wrap items-center justify-between mx-auto md:w-5/6 w-full shadow-md">
+        <label
+            class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-sm text-gray-700 transition-all duration-200">
+            <input type="checkbox" class="type-checkbox" value="file">
+            <span class="ml-2">File</span>
+        </label>
+        <label
+            class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-sm text-gray-700 transition-all duration-200">
+            <input type="checkbox" class="type-checkbox" value="domain-name">
+            <span class="ml-2">Domain Name</span>
+        </label>
+        <label
+            class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-sm text-gray-700 transition-all duration-200">
+            <input type="checkbox" class="type-checkbox" value="identity">
+            <span class="ml-2">Identity</span>
+        </label>
+        <label
+            class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-sm text-gray-700 transition-all duration-200">
+            <input type="checkbox" class="type-checkbox" value="ipv4-addr">
+            <span class="ml-2">IPv4 Address</span>
+        </label>
+        <label
+            class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-sm text-gray-700 transition-all duration-200">
+            <input type="checkbox" class="type-checkbox" value="port">
+            <span class="ml-2">Port</span>
+        </label>
+        <label
+            class="inline-flex cursor-pointer text-left pr-8 border-r-4 hover:text-red-500 font-semibold text-sm text-gray-700 transition-all duration-200">
+            <input type="checkbox" class="type-checkbox" value="url">
+            <span class="ml-2">URL</span>
+        </label>
+    </div>
+
+    <!-- Display table if data is available -->
+    <div id="data-container">
+        <div class="max-h-[400px] overflow-auto border-2 border-gray-300 rounded-md shadow-lg mx-2">
+            <div id="loading" class=" p-4 text-center  relative flex items-center justify-center bg-gray-100 z-50 hidden">
+                <div class="text-center flex gap-8  w-full h-8 items-center justify-center"> <span class="animate-ping absolute inline-flex h-8 w-8 rounded-full bg-red-600 "></span> </div>
+            </div>
+
+            <div id="api-error"
+                class="relative font-semibold text-lg text-gray-800 p-6 flex items-center justify-center bg-red-100 bg-opacity-75 z-50 hidden">
+                <div class="bg-white p-4 rounded-lg ">
+                    <span class="text-red-700 font-semibold">Error:</span>
+                    <span id="error-message"  class="ml-2 "></span>
+                </div>
+            </div>
+
+            <table id="threats-table" class="min-w-full bg-white text-xs hidden">
+                <thead>
+                    <tr>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            Type</th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            ID</th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            Created
+                        </th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            Modified
+                        </th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            Hashes
+                        </th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            External resources
+                        </th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            Score
+                        </th>
+                        <th
+                            class="w-fit py-1 underline bg-white font-semibold sticky top-0 text-xs leading-4 text-gray-800 uppercase tracking-wider">
+                            Labels
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+
+
+                    <!-- Data rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="px-2 mt-8">
+    <div class="w-full shadow-md bg-white max-h-[600px] rounded border-2 border-gray-300">
+        <div class="font-semibold text-lg p-4">Threat Actors
+            <span class="text-xs font-normal bg-red-200 border-2 border-red-400 rounded-md px-1">300</span>
+        </div>
+        <div class="overflow-y-auto">
+            <table class="w-full">
+                <thead class="bg-white text-gray-600 text-left text-xs">
+                    <tr>
+                        <th class="py-2 px-4 sticky top-0 bg-white underline">Actor</th>
+                        <th class="py-2 px-4 sticky top-0 bg-white underline">Category</th>
+                        <th class="py-2 px-4 sticky top-0 bg-white underline">Objective</th>
+                        <th class="py-2 px-4 sticky top-0 bg-white underline">Attack Index</th>
+                        <th class="py-2 px-4 sticky top-0 bg-white underline z-40">12 Months Trend</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white text-sm">
+                    <tr class="border-b text-sm">
+                        <td class="py-2 px-4"><a class="underline text-blue-500"
+                                href="{% url 'threat-actor-profile' %}">TA547</a></td>
+                        <td class="py-2 px-4">E-Crime</td>
+                        <td class="py-2 px-4"><span
+                                class="border-2 border-red-400 rounded-md p-1 bg-red-100 text-xs">Deploy
+                                Ransomeware</span></td>
+                        <td class="py-2 px-4">243</td>
+                        <td class="py-2 px-4 z-0">
+                            <div id="chart_div"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="my-6 bg-gray-200 border-2 border-gray-400 p-4 rounded shadow-lg">
+        <div class="font-semibold text-xl mb-6 mt-8 w-fit mx-auto">Trending <span class="text-red-500">Threats</span>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-12 mx-auto mt-8">
+            {% if news_data_sorted %}
+            {% for news in news_data_sorted %}
+            <div
+                class="group bg-white flex shadow-lg hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-300 ease-in-out flex-col gap-2 border-2 border-gray-300 hover:border-red-400 rounded w-full md:w-1/4 p-4">
+                <h1 class="font-semibold text-lg text-red-900 py-2 w-fit mx-auto">{{ news.headlines }}</h1>
+                <div class="w-full h-full overflow-hidden h-[300px]">
+                    <img src="{{ news.newsImgURL }}" alt="malware news"
+                        class="w-full h-full group-hover:scale-110 transform transition-all duration-300 ease-in-out object-cover">
+                </div>
+                <p class="max-h-36 text-gray-600 p-4 overflow-hidden hover:text-black">{{ news.fullNews }}</p>
+                <a target="_blank" href="{{ news.newsURL }}" class="text-blue-500 hover:underline px-4 pb-4">Read
+                    more</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="flex my-8 flex-col justify-center items-center mx-auto">
+                <img src="/static/images/Warning-rafiki.svg" height="100" width="300" alt="">
+                <div class="font-semibold text-lg ">Oops , Failed to load data : {{ "(" }} </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Load Google Charts
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Fetch data asynchronously
+        fetchData();
+    });
+
+    function fetchData() {
+        document.getElementById('loading').style.display = 'block';
+        fetch('/fetch-threat-intelligence-data/')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                if (data.error) {
+                    // console.log("Error : ===============>> ", data)
+                    document.getElementById('api-error').innerText = data.error;
+                } else {
+                    document.getElementById('threats-table').classList.remove('hidden');
+                    console.log("Error : ===============>> ", data)
+                    displayData(data);
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('api-error').innerText = 'Error fetching data';
+                document.getElementById('api-error').classList.remove('hidden')
+            });
+    }
+
+
+    function displayData(data) {
+        const typesContainer = document.getElementById('types');
+        if (!data || !data.types) {
+            console.error('Invalid data format:', data);
+            document.getElementById('api-error').innerText = 'Error: Invalid data format';
+            return;
+        }
+
+        const dataTable = document.getElementById('data-table-body');
+        if (!data.data || !data.data.objects) {
+            console.error('No objects found in data:', data);
+            document.getElementById('api-error').innerText = 'Error: No objects found in data';
+            return;
+        }
+
+        data.data.objects.forEach(obj => {
+            const row = document.createElement('tr');
+            row.classList.add('hover:bg-gray-200', 'text-gray-600', 'hover:text-black', 'data-row');
+            row.setAttribute('data-type', obj.type);
+
+            row.innerHTML = `
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200">${obj.type}</td>
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200">${obj.id}</td>
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200">${obj.created || 'N/A'}</td>
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200">${obj.modified || 'N/A'}</td>
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200 hashes">${getHashes(obj.hashes)}</td>
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200 overflow-y-auto"> <div class="max-h-24 overflow-y-auto"> ${getExternalReferences(obj.external_references)} </div> </td>
+            <td class="px-2 py-2 whitespace-no-wrap text-center border-b border-gray-200">${obj.score}</td>
+            <td class="px-2 py-2 whitespace-no-wrap text-left border-b border-gray-200">${getLabels(obj.labels)}</td>
+        `;
+            dataTable.appendChild(row);
+        });
+
+        // Render the chart after data is displayed
+        drawChart();
+    }
+
+    function getHashes(hashes) {
+        if (!hashes) return '<li class="text-black list-none text-lg text-center font-bold">-</li>';
+        return Object.entries(hashes).map(([hash_type, hash_value]) =>
+            `<li class="text-yellow-700 list-none"><strong class="text-gray-700">${hash_type}:</strong> ${hash_value}</li>`).join('');
+    }
+
+    function getExternalReferences(external_references) {
+        if (!external_references) return '<li class="text-gray-700 text-center list-none font-bold text-lg ">-</li>';
+        return external_references.map(ref =>
+            `<li><a href="${ref.url}" target="_blank" class="hover:text-red-600 py-4 list-none underline">${ref.source_name}</a></li>`).join('');
+    }
+
+    function getLabels(labels) {
+        if (!labels) return '<li class="text-black text-center list-none font-bold text-lg ">-</li>';
+        return labels.map(label =>
+            `<li class="bg-gray-500 px-2 rounded-lg w-fit m-2 list-none text-white">${label}</li>`).join('');
+    }
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Month', 'Threats'],
+            ['January', 1000],
+            ['February', 1170],
+            ['March', 660],
+            ['April', 1030],
+            ['June', 1030],
+            ['July', 1030],
+            ['August', 1030],
+            ['Sept', 1030],
+            ['Oct', 1030],
+            ['Nov', 1030],
+            ['Dec', 1030],
+
+        ]);
+
+        var options = {
+            title: 'Threat Trend',
+            curveType: 'function',
+            legend: { position: 'bottom' }
+        };
+
+        var chartContainer = document.getElementById('chart_div');
+        if (chartContainer) {
+            var chart = new google.visualization.LineChart(chartContainer);
+            chart.draw(data, options);
+        } else {
+            console.error('Chart container is not defined.');
+        }
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        google.charts.load('current', { packages: ['corechart', 'line'] });
+        google.charts.setOnLoadCallback(drawBasic);
+
+        function drawBasic() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'X');
+            data.addColumn('number', 'Threats');
+
+            data.addRows([
+                [0, 0], [1, 10], [2, 23], [3, 17], [4, 18], [5, 9],
+                [6, 11], [7, 27], [8, 33], [9, 40], [10, 32], [11, 35]
+            ]);
+            var options = {
+                height: 100,
+                width: 220,
+                backgroundColor: {
+                    fill: 'transparent'
+                }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(threatCatChart);
+        function threatCatChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Threat Source', 'Numbers'],
+                ['Nation states', 11],
+                ['Terrorist organizations', 2],
+                ['Criminal groups', 2],
+                ['Hackers', 2],
+                ['Malicious insiders', 7]
+            ]);
+
+            var options = {
+                title: 'Threat Categories',
+                // pieHole: 0.4,
+                width: 350,
+                height: 350,
+                chartArea: { width: '100%', height: '100%' }
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(data, options);
+        }
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to filter table based on selected checkboxes
+        function filterTable() {
+            const checkboxes = document.querySelectorAll('.type-checkbox');
+            const selectedTypes = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+            const rows = document.querySelectorAll('.data-row');
+            rows.forEach(row => {
+                const rowType = row.dataset.type;
+                const hashes = row.querySelector('.hashes').textContent.toLowerCase();
+                const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(rowType);
+                const searchMatch = hashes.includes(searchTerm);
+
+                if (typeMatch && searchMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Add event listeners to checkboxes
+        const checkboxes = document.querySelectorAll('.type-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', filterTable);
+        });
+
+        // Add event listener to search input
+        document.getElementById('search-input').addEventListener('input', filterTable);
+
+        // Initial filter to show all rows since no checkbox is selected by default
+        filterTable();
+    });
+
+
+
+
+
+</script>
+{% endblock content %}
