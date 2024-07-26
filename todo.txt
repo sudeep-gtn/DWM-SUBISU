@@ -4,3 +4,12 @@ admin pannel
     moderator
 
 
+
+
+// 2024/07/26 Friday Review (Sudeep Bogati)
+todo :
+    1. CI/CD Pipeline for deployment on local ubuntu machine using SSH
+    2. Admin privilege for adding/edit data for Domain breach, PII Exposure, Black Market, Stealer logs
+    3. Ehance report template including tickets.
+    4. Sanitize inputs to prevents from cyber attacks.
+    

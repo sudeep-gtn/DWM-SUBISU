@@ -58,14 +58,14 @@
           <label for="source " class="block text-sm font-medium text-gray-700"> Source </label>
           <input type="text" id="source" name="source"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value="{{ post_data.source|default:'' }}" placeholder="eg. Black Market A " required/>
+            value="{{ post_data.source|default:'' }}" placeholder="eg. Black Market A " />
         </div>
         <!-- ------domain ip ---------------------------------->
         <div>
           <label for="log_preview" class="block text-sm font-medium text-gray-700"> Stealer log preview </label>
           <input type="text" id="log_preview" name="log_preview"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value="{{ post_data.log_preview |default:'' }}" placeholder="Preview of different stolen data..."required />
+            value="{{ post_data.log_preview |default:'' }}" placeholder="Preview of different stolen data..." />
         </div>
 
         <!--  breach date   -->
@@ -73,20 +73,20 @@
           <label for="related_assets" class="block text-sm font-medium text-gray-700"> Related assests </label>
           <input type="text" id="related_assets" name="related_assets"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value="{{ post_data.related_assets|default:'' }}" placeholder="eg. Credit cards, PII"required />
+            value="{{ post_data.related_assets|default:'' }}" placeholder="eg. Credit cards, PII" />
         </div>
 
         <div>
           <label for="price" class="block text-sm font-medium text-gray-700"> Price </label>
           <input type="number" id="price" name="price"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value="{{ post_data.price|default:'' }}" placeholder="eg. 120"required />
+            value="{{ post_data.price|default:'' }}" placeholder="eg. 120" />
         </div>
 
         <div>
           <label for="status" class="block text-sm font-medium text-gray-700"> Status </label>
          <select name="status" id="status"
-         required
+         
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
           <option value="" {% if post_data.status|default:'' == '' %}selected{% endif %}>Select status</option>
           <option value="Available" {% if post_data.status|default:'' == 'Available' %}selected{% endif %}>Available</option>
@@ -98,13 +98,13 @@
 
         <div>
           <label for="obtain_progress" class="block text-sm font-medium text-gray-700"> Obtain progress</label>
-          <input required type="number" id="obtain_progress" name="obtain_progress"
+          <input type="number" id="obtain_progress" name="obtain_progress"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value="{{ post_data.obtain_progress|default:'' }}"
             placeholder="Enter progress (1-100)" min="1" max="100" />
         </div>
         <div>
-          <label required for="discovery_date" class="block text-sm font-medium text-gray-700"> Discovery date </label>
+          <label  for="discovery_date" class="block text-sm font-medium text-gray-700"> Discovery date </label>
           <input type="date" id="discovery_date" name="discovery_date"
           value="{{ post_data.discovery_date|default:'' }}"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
@@ -112,7 +112,7 @@
 
         <div>
           <label for="incident" class="block text-sm font-medium text-gray-700"> Incident </label>
-          <input required type="text" id="incident" name="incident"
+          <input  type="text" id="incident" name="incident"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value="{{ post_data.incident|default:'' }}"
             placeholder="eg. DB hacked..." />

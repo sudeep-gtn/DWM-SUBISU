@@ -163,7 +163,8 @@ class DomainView(LoginRequiredMixin, View):
             errors.append("Source domain must be at most 255 characters long.")
 
         if errors:
-            return HttpResponse(f"Errors: {', '.join(errors)}", status=400)
+            return render(request, 'domain.html', {'errors': errors,'post_data': request.POST})
+
 
         # Create and save the new domain record
         new_domain_record = Domain(
@@ -507,7 +508,7 @@ class StealerLogsView(LoginRequiredMixin, View):
         return render(request, "stealer-logs.html",{'counts_json': counts_json,'stealer_logs': stealer_logs,'context':context, 'stealer_log_counts':total_stealer_log_counts})
 
     def post(self, request):
-        if request.user.is_superadmin:
+        if not request.user.is_superadmin:
             return HttpResponse("403 Forbidden. Access strictly denied.", status=403)
         errors = []
         post_data = {}
