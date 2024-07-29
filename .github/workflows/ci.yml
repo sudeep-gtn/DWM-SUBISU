@@ -1,4 +1,4 @@
-name: Django CI/CD Pipeline
+name: DWM CI/CD Pipeline
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
 
     - name: Install Docker
       run: |
-        sudo apt-get -y update
+        sudo apt-get update
         sudo apt-get install -y docker.io
         sudo systemctl start docker
         sudo systemctl enable docker
@@ -82,21 +82,20 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Install Docker Compose
-      run: sudo apt-get install docker-compose
+      run: sudo apt-get install -y docker-compose
 
-    - name: Start SSH agent and add SSH key
+    - name: Set up SSH
       run: |
-        eval "$(ssh-agent -s)"
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
 
     - name: Deploy to server
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_USER: ${{ secrets.SSH_USER }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
       run: |
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
         ssh $SSH_USER@$SERVER_IP << 'EOF'
           cd /home/gtn/gkavach-dwm/DWM-SUBISU
           git pull origin main
