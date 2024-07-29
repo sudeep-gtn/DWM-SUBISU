@@ -89,7 +89,7 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_USER: ${{ secrets.SSH_USER }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
-      run: |
+      run:
         echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
         ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
         ssh $SSH_USER@$SERVER_IP << 'EOF'
