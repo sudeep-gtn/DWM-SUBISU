@@ -102,6 +102,6 @@ jobs:
         ssh $SSH_USER@$SERVER_IP << 'EOF'
           cd /home/gtn/gkavach-dwm/DWM-SUBISU
           git pull origin main
-          docker-compose down
-          docker-compose up -d --build
+          docker compose down
+          docker compose up -d --build
         EOF
