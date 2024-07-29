@@ -89,7 +89,11 @@ jobs:
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+
+    - name: Debug SSH Keyscan
+      run: |
+        echo "Server IP: $SERVER_IP"
+        ssh-keyscan -H $SERVER_IP || true
 
     - name: Deploy to server
       env:
