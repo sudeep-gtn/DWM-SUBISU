@@ -84,6 +84,11 @@ jobs:
     - name: Install Docker Compose
       run: sudo apt-get install docker-compose
 
+    - name: Start SSH agent and add SSH key
+      run: |
+        eval "$(ssh-agent -s)"
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+
     - name: Deploy to server
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
