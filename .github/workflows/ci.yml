@@ -84,16 +84,23 @@ jobs:
     - name: Install Docker Compose
       run: sudo apt-get install -y docker-compose
 
-   - name: Deploy to server
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Debug SSH Keyscan
+      run: |
+        echo "Server IP: $SERVER_IP"
+        ssh-keyscan -H $SERVER_IP || true
+    - name: Deploy to server
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SSH_USER: ${{ secrets.SSH_USER }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
-      run:
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+      run: |
         ssh $SSH_USER@$SERVER_IP << 'EOF'
-          cd ~/gkavach-dwm/DWM-SUBISU
+          cd /home/gtn/gkavach-dwm/DWM-SUBISU
           git pull origin main
           docker-compose down
           docker-compose up -d --build
