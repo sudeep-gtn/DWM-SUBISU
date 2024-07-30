@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-v#z%qg+3x7zgqlc((_z0_r_o@dt*684uvbl_l0r_f4b9ylp6%7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.170.69', '127.0.0.1','192.168.150.67','192.168.11.206']
+ALLOWED_HOSTS = ['192.168.170.69', '127.0.0.1','192.168.150.67','192.168.11.206','0.0.0.0']
 
 
 # Application definition
@@ -200,4 +200,7 @@ EMAIL_HOST_PASSWORD = 'cyqxpptigbycrkcb'
 DEFAULT_FROM_EMAIL='sudeepbogati@google.com'
 # print(EMAIL_HOST_USER)
 # print(EMAIL_HOST_PASSWORD)
-ADMIN_EMAIL = 'sudeep.bogati@greentick.com.np'
+import os
+# ADMIN_EMAIL = 'sudeep.bogati@greentick.com.np'
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
+ORG_ADMIN_EMAIL = "shyam.bista@greentick.com.np"

@@ -488,7 +488,7 @@ class StealerLogsView(LoginRequiredMixin, View):
             counts[month - 1] = log['count']
 
         
-        years = range(2020, datetime.now().year + 1)
+        years = range(2023, datetime.now().year + 1)
         counts_json = json.dumps(counts)
         context = {
             'months': months,
@@ -821,7 +821,7 @@ class IncidentResponse(LoginRequiredMixin, View):
         new_ticket.save()
         admin_email = settings.ADMIN_EMAIL
         subject = f'New Ticket Created: {ticket_title}'
-        message = f'A new ticket has been created by {request.user.full_name}.\n\nTitle: {ticket_title}\n\nDescription: {ticket_description}'
+        message = f'A new ticket has been created by { request.user.full_name}.\n\nTitle: {ticket_title}\n\nDescription: {ticket_description}'
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [admin_email]
         if not request.user.is_superuser and not request.user.is_org_admin: 

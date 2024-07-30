@@ -121,6 +121,7 @@
                     <input type="text" id="domain_name" name="domain_name"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="eg. example.com"
+                        value="{{ post_data.domain_name|default:'' }}"
                         required />
                 </div>
                 <!-- ------domain ip ---------------------------------->
@@ -129,6 +130,7 @@
                     <input type="text" id="domain_ip" name="domain_ip"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="xxx.xxx.xxx"
+                        value="{{ post_data.domain_ip|default:'' }}"
                         required />
                 </div>
 
@@ -137,6 +139,7 @@
                     <label for="breach_date" class="block text-sm font-medium text-gray-700"> Breach date </label>
                     <input type="date" id="breach_date" name="breach_date"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        value="{{ post_data.breach_date|default:'' }}"
                         required />
                 </div>
 
@@ -147,6 +150,7 @@
                     <input type="text" id="source_ip" name="source_ip"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="xxx.xxx.xxx"
+                        value="{{ post_data.source_ip|default:'' }}"
                         required />
                 </div>
 
@@ -155,6 +159,7 @@
                     <input type="text" id="source_domain" name="source_domain"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="eg. example-1.com"
+                        value="{{ post_data.source_domain|default:'' }}"
                         required />
                 </div>
                 <div class="flex justify-end">

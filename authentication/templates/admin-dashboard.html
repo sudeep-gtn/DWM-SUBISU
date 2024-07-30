@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>{% block title %} Dashboard | Admin {% endblock title %}</title>
+    <style>
+        .bg-illustration {
+            background-image: url('path-to-your-illustration-image.jpg'); /* Replace with your illustration image URL */
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div id="sidebar"
+        class=" overflow-y-auto px-4  fixed overflow-hidden top-0 left-0 z-50  bg-black text-white  md:px-0 z-50 md:w-[200px] h-screen items-center flex flex-col justify-between">
+            <h1 class="text-2xl p-2 font-bold mb-8">Admin Panel</h1>
+            <nav class="flex-1 text-center">
+                <ul>
+                    <li class="mb-4">
+                        <a href="/admin-site/dashboard" class=" hover:text-red-400  {% if request.path == '/admin-site/dashboard' %} text-red-600  font-bold  {% endif %} ">Dashboard</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="/admin-site/users" class="hover:text-red-400  {% if request.path == '/admin-site/users' %}  text-red-600 font-semibold  px-2  {% endif %}">Users</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="#" class=" hover:text-red-400  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Settings</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="#" class=" hover:text-red-400  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Reports</a>
+                    </li>
+                </ul>
+            </nav>
+            <div>
+                <a href="#" class="text-red-600 hover:text-red-400">Logout</a>
+            </div>
+        
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+   <div class="ml-[190px]">
+         {% block content %}
+        <div class="flex-1  p-6">
+            <h2 class="text-2xl font-bold text-black mb-6">Dashboard</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-black mb-4">Users</h3>
+                    <p class="text-red-600">Total Users: 123</p>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-black mb-4">Active Sessions</h3>
+                    <p class="text-red-600">Active Now: 45</p>
+                </div>
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-black mb-4">Reports</h3>
+                    <p class="text-red-600">New Reports: 8</p>
+                </div>
+            </div>
+        </div>
+        {% endblock content %}
+
+    </div> 
+</body>
+<script>
+    function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('overlay');
+    if (sidebar.classList.contains('hidden')) {
+      sidebar.classList.remove('hidden');
+      sidebar.classList.add('block');
+      sidebar.classList.remove('slide-out');
+      sidebar.classList.add('slide-in');
+      overlay.classList.remove('hidden');
+      document.querySelector('body').classList.add('overflow-hidden')
+    } else {
+      sidebar.classList.remove('slide-in');
+      sidebar.classList.add('slide-out');
+      setTimeout(function () {
+        overlay.classList.add('hidden');
+        sidebar.classList.add('hidden');
+      }, 300); // Match the duration of the slide-out animation
+    }
+  }
+</script>
+</html>

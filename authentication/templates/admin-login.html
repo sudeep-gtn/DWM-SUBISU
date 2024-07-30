@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .bg-illustration {
+            background-image: url('path-to-your-illustration-image.jpg'); /* Replace with your illustration image URL */
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div class="min-h-screen flex flex-col mx-auto items-center justify-center">
+        <div class="text-4xl  font-extrabold text-black mb-8">Admin <span class="text-red-600">Login</span></div>
+        <div class="flex flex-col items-center justify-center w-full mx-auto px-3 py-12">
+           <div class="flex w-full flex-col md:flex-row justify-center items-center gap-8">
+            <div class="md:border-r-4 md:py-8 px-4  border-red-600 ">
+                <img src="/static/images/admin-login.svg" class="w-[200px] md:w-[300px]"  alt="">
+            </div>
+            <form method="POST" class="w-full max-w-sm">
+                {% csrf_token %}
+                {% if error %}
+                <div class=" text-red-600 gap-2 mb-4  border-2 border-red-600 px-4 py-2  mx-auto rounded flex items-center ">
+                    <?xml version="1.0" ?>
+                    <!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN' 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+                    <svg height="22" style="overflow:visible;enable-background:new 0 0 32 32" viewBox="0 0 32 32" width="22"
+                        xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <g id="Error_1_">
+                                <g id="Error">
+                                    <circle cx="16" cy="16" id="BG" r="16" style="fill:#D72828;" />
+                                    <path d="M14.5,25h3v-3h-3V25z M14.5,6v13h3V6H14.5z" id="Exclamatory_x5F_Sign"
+                                        style="fill:#E6E6E6;" />
+                                </g>
+                            </g>
+                        </g>
+                    </svg> <span>{{ error }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="mb-4 w-full">
+                    <label class="block text-red-600 text-sm font-bold mb-2" for="username">Email</label>
+                    <input  required maxlength="50" class="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:border-gray-400  focus:outline-none focus:shadow-outline" id="email" name="email" type="email" placeholder="eg. admin@example.com">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-red-600 text-sm font-bold mb-2" for="password">Password</label>
+                    <input required maxlength="20" class="shadow appearance-none border-2 focus:border-gray-400 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" name="password" type="password" placeholder="**********">
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="hover:bg-red-500 transition-all duration-300 ease-in-out active:scale-105 transform bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Sign In</button>
+                </div>
+            </form>
+           </div>
+        </div>
+    </div>
+</body>
+</html>

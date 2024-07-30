@@ -234,3 +234,43 @@ class NoPermissionView(View) :
         return HttpResponse("403 Forbidden")
     
 
+
+
+class AdminLogin(View):
+    def get(self , request):
+        return render(request, "admin-login.html")
+    
+    def post(self, request):
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
+
+        if not email or not password:
+            return render(request, "admin-login.html", {"error": "Email and password are required."})
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            return render(request, "admin-login.html", {"error": "Invalid email format."})
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return render(request, "admin-login.html", {"error": "User with the provided email does not exist"})
+
+        user = authenticate(request, email=email, password=password)
+
+        print("email : ", email, 'password', password, "user:", user)
+        if user is not None and user.is_superuser:
+            login(request, user)
+            return redirect('admin-dashboard')
+        else:
+            return render(request, "admin-login.html", {"error": "Invalid username or password!"})
+
+class AdminDashboard(View):
+    def get(self, request):
+        return render(request, "admin-dashboard.html")
+    
+    
+class AdminUsers(View):
+    def get(self, request):
+        return render(request, "admin-users.html")
