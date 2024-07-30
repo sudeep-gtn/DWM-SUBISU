@@ -80,7 +80,7 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << 'EOF'
-          cd /home/gtn/gkavach-dwm/DWM-SUBISU
+          cd ~/gkavach-dwm/DWM-SUBISU
           git pull origin main
           docker-compose down
           docker-compose up -d --build
