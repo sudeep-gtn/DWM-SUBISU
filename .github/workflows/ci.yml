@@ -65,20 +65,22 @@ jobs:
           sudo usermod -aG docker $USER
       - name: Install Docker Compose
         run: sudo apt-get install -y docker-compose  
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.TOKEN }}
-      - name: Debug SSH Keyscan 
-        run: |
-          echo "Server IP: ${{ secrets.SERVER_IP }}"
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} || true
+      
+      # - name: Set up SSH
+      #   uses: webfactory/ssh-agent@v0.5.3
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Debug SSH Keyscan 
+      #   run: |
+      #     echo "Server IP: ${{ secrets.SERVER_IP }}"
+      #     ssh-keyscan -H ${{ secrets.SERVER_IP }} || true
+
       - name: Deploy to server
         env:
           SSH_USER: "gtn"
           SERVER_IP: "192.168.11.206"
         run: |
-          ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << 'EOF'
+          ssh -o StrictHostKeyChecking=no gtn@192.168.11.206 << 'EOF'
           cd ~/gkavach-dwm/DWM-SUBISU
           git pull origin main
           docker-compose down
