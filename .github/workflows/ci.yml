@@ -2,16 +2,13 @@ name: DWM CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-20.04
-
     services:
       postgres:
         image: postgres:16
@@ -26,82 +23,65 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
 
-    - name: Install Docker
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker.io
-        sudo systemctl start docker
-        sudo systemctl enable docker
-        sudo usermod -aG docker $USER
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-
-    - name: Install Docker Compose
-      run: sudo apt-get install -y docker-compose
-
-    - name: Build and run Django app
-      run: docker-compose up -d --build
-
-    # - name: Run tests
-    #   run: docker-compose exec web python manage.py test
-
+          sudo usermod -aG docker $USER
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Cache Docker layers (optional)
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Install Docker Compose
+        run: sudo apt-get install -y docker-compose
+      - name: Build and run Django app
+        run: docker-compose up -d --build
   deploy:
     runs-on: ubuntu-20.04
     needs: build
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker 
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-
-    - name: Install Docker Compose
-      run: sudo apt-get install -y docker-compose
-
-    - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-
-    - name: Debug SSH Keyscan
-      run: |
-        echo "Server IP: $SERVER_IP"
-        ssh-keyscan -H $SERVER_IP || true
-    - name: Deploy to server
-      env:
-        SSH_USER: ${{ secrets.SSH_USER }}
-        SERVER_IP: ${{ secrets.SERVER_IP }}
-      run: |
-        ssh $SSH_USER@$SERVER_IP << 'EOF'
+          sudo usermod -aG docker $USER
+      - name: Install Docker Compose
+        run: sudo apt-get install -y docker-compose
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Debug SSH Keyscan 
+        run: |
+          echo "Server IP: ${{ secrets.SERVER_IP }}"
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} || true
+      - name: Deploy to server
+        env:
+          SSH_USER: ${{ secrets.GITHUB_TOKEN }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << 'EOF'
           cd /home/gtn/gkavach-dwm/DWM-SUBISU
           git pull origin main
-          docker compose down
-          docker compose up -d --build
-        EOF
+          docker-compose down
+          docker-compose up -d --build
+          EOF
