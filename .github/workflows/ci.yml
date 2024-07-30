@@ -1,5 +1,4 @@
 name: DWM CI/CD Pipeline
-
 on:
   push:
     branches: [ main ]
