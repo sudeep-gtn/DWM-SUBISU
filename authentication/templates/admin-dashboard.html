@@ -6,13 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <title>{% block title %} Dashboard | Admin {% endblock title %}</title>
-    <style>
-        .bg-illustration {
-            background-image: url('path-to-your-illustration-image.jpg'); /* Replace with your illustration image URL */
-            background-size: cover;
-            background-position: center;
-        }
-    </style>
+
 </head>
 <body class="bg-white">
     <div id="sidebar"
@@ -21,39 +15,27 @@
             <nav class="flex-1 text-center">
                 <ul>
                     <li class="mb-4">
-                        <a href="/admin-site/dashboard" class=" hover:text-red-400  {% if request.path == '/admin-site/dashboard' %} text-red-600  font-bold  {% endif %} ">Dashboard</a>
+                        <a href="/admin-site/dashboard" class=" hover:text-red-600  {% if request.path == '/admin-site/dashboard' %} text-red-600  font-bold  {% endif %} ">Dashboard</a>
                     </li>
                     <li class="mb-4">
-                        <a href="/admin-site/users" class="hover:text-red-400  {% if request.path == '/admin-site/users' %}  text-red-600 font-semibold  px-2  {% endif %}">Users</a>
+                        <a href="/admin-site/users" class="hover:text-red-600  {% if request.path == '/admin-site/users' %}  text-red-600 font-semibold  px-2  {% endif %}">Users</a>
                     </li>
                     <li class="mb-4">
-                        <a href="#" class=" hover:text-red-400  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Settings</a>
+                        <a href="#" class=" hover:text-red-600  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Settings</a>
                     </li>
                     <li class="mb-4">
-                        <a href="#" class=" hover:text-red-400  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Reports</a>
+                        <a href="#" class=" hover:text-red-600  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Reports</a>
                     </li>
                 </ul>
             </nav>
             <div>
-                <a href="#" class="text-red-600 hover:text-red-400">Logout</a>
+                <a href="#" class="text-red-600 hover:text-red-600">Logout</a>
             </div>
         
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-   <div class="ml-[190px]">
-         {% block content %}
-        <div class="flex-1  p-6">
+    <div id="main-content" class="ml-[190px] p-6">
+        {% block content %}
+        <div>
             <h2 class="text-2xl font-bold text-black mb-6">Dashboard</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-white shadow-md rounded-lg p-6">
@@ -71,28 +53,24 @@
             </div>
         </div>
         {% endblock content %}
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const links = document.querySelectorAll(".nav-link");
 
-    </div> 
-</body>
-<script>
-    function toggleSidebar() {
-    var sidebar = document.getElementById('sidebar');
-    var overlay = document.getElementById('overlay');
-    if (sidebar.classList.contains('hidden')) {
-      sidebar.classList.remove('hidden');
-      sidebar.classList.add('block');
-      sidebar.classList.remove('slide-out');
-      sidebar.classList.add('slide-in');
-      overlay.classList.remove('hidden');
-      document.querySelector('body').classList.add('overflow-hidden')
-    } else {
-      sidebar.classList.remove('slide-in');
-      sidebar.classList.add('slide-out');
-      setTimeout(function () {
-        overlay.classList.add('hidden');
-        sidebar.classList.add('hidden');
-      }, 300); // Match the duration of the slide-out animation
-    }
-  }
-</script>
+            links.forEach(link => {
+                link.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const url = this.getAttribute("data-url");
+
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById("main-content").innerHTML = data;
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+    </script>
 </html>
