@@ -75,7 +75,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_IP }} || true
       - name: Deploy to server
         env:
-          SSH_USER: ${{ secrets.GITHUB_TOKEN }}
+          SSH_USER: ${{ secrets.SSH_USER }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << 'EOF'
