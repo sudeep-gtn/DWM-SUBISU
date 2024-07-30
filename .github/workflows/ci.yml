@@ -64,11 +64,11 @@ jobs:
 
           sudo usermod -aG docker $USER
       - name: Install Docker Compose
-        run: sudo apt-get install -y docker-compose
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: sudo apt-get install -y docker-compose  
+      # - name: Set up SSH
+      #   uses: webfactory/ssh-agent@v0.5.3
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Debug SSH Keyscan 
         run: |
           echo "Server IP: ${{ secrets.SERVER_IP }}"
