@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import CustomUser, UserLoginHistory
+from .models import CustomUser, UserLoginHistory,Organization
 from django.contrib.auth import (
     authenticate, login, logout, update_session_auth_hash
 )
@@ -12,8 +12,10 @@ import re
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from .utils import send_otp_email, is_otp_valid
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.utils.decorators import method_decorator
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .decorators import superadmin_required, org_admin_required
 
@@ -255,7 +257,7 @@ class AdminLogin(View):
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
-            return render(request, "admin-login.html", {"error": "User with the provided email does not exist"})
+            return render(request, "admin-login.html", {"error": "User with the provided email does not exist",'post_data': request.POST})
 
         user = authenticate(request, email=email, password=password)
 
@@ -264,13 +266,71 @@ class AdminLogin(View):
             login(request, user)
             return redirect('admin-dashboard')
         else:
-            return render(request, "admin-login.html", {"error": "Invalid username or password!"})
+            return render(request, "admin-login.html", {"error": "Invalid username or password!",'post_data': request.POST})
 
+
+
+
+@method_decorator(superadmin_required, name='dispatch')
 class AdminDashboard(View):
     def get(self, request):
-        return render(request, "admin-dashboard.html")
+        organizations = Organization.objects.all()
+        organization_count = organizations.count()
+        total_user_count = CustomUser.objects.all().count()
+        context = {
+            "organizations" : organizations,
+            "org_count" : organization_count,
+            "total_user_count" : total_user_count 
+        }
+        return render(request, "admin-dashboard.html", context)
     
     
+
+@method_decorator(superadmin_required, name='dispatch')
 class AdminUsers(View):
     def get(self, request):
-        return render(request, "admin-users.html")
+        superadmins = CustomUser.objects.filter(is_superadmin=True)
+        organizations = Organization.objects.all()
+        org_admins = CustomUser.objects.filter(is_org_admin=True)
+        
+        normal_users = CustomUser.objects.filter(is_superadmin=False, is_org_admin=False)
+
+        context = {
+            'superadmins': superadmins,
+            'org_admins': org_admins,
+            'normal_users': normal_users,
+            "superadmin_counts":superadmins.count(),
+            "org_admin_count" : org_admins.count(),
+            "normal_user_counts":normal_users.count(),
+            "organizations":organizations
+        }
+
+        return render(request, "admin-users.html", context)
+    
+    def post(self, request):
+            user_id = request.POST.get('user_id')
+            user = get_object_or_404(CustomUser, id=user_id)
+            new_role = request.POST.get('role')
+
+
+            if user.is_superadmin and CustomUser.objects.filter(is_superadmin=True).count() == 1:
+                messages.error(request, "There must be at least one superuser.")
+            else:
+                if new_role in ['org_admin', 'superuser'] and not user.is_email_verified:
+                    messages.error(request, "User's email must be verified to assign this role.")
+                else:
+                    if new_role == 'org_admin':
+                        user.is_org_admin = True
+                        user.is_superadmin = False
+                    elif new_role == 'superuser':
+                        user.is_superadmin = True
+                        user.is_org_admin = False
+                    else:
+                        user.is_org_admin = False
+                        user.is_superadmin = False
+
+                    user.save()
+                    messages.success(request, f"User role updated to {new_role.replace('_', ' ').title()}.")
+            
+            user.save()
+            return redirect('admin-users') 

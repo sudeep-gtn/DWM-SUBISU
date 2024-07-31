@@ -8,14 +8,17 @@
     <title>{% block title %} Dashboard | Admin {% endblock title %}</title>
 
 </head>
-<body class="bg-white">
+<body class="bg-gray-800 ">
     <div id="sidebar"
-        class=" overflow-y-auto px-4  fixed overflow-hidden top-0 left-0 z-50  bg-black text-white  md:px-0 z-50 md:w-[200px] h-screen items-center flex flex-col justify-between">
-            <h1 class="text-2xl p-2 font-bold mb-8">Admin Panel</h1>
-            <nav class="flex-1 text-center">
+        class=" overflow-y-auto fixed overflow-hidden top-0 left-0 z-50 w-[160px]  bg-gray-900 text-white  z-50  h-screen items-center flex flex-col justify-between">
+            <div class="p-2 border-b border-gray-400 flex flex-col items-center justify-center">
+                <div class="text-xl p font-extrabold ">Admin <span class="text-red-600">Panel</span></div>
+                <div class="mb-4"> <img src="https://gkavach.com/storage/2023/02/greentick.png" width="80" height="120" alt=""> </div>
+            </div>
+            <nav class="flex-1 px-4 mt-4  text-center">
                 <ul>
                     <li class="mb-4">
-                        <a href="/admin-site/dashboard" class=" hover:text-red-600  {% if request.path == '/admin-site/dashboard' %} text-red-600  font-bold  {% endif %} ">Dashboard</a>
+                        <a href="/admin-site/dashboard" class="flex gap-1 hover:text-red-600  {% if request.path == '/admin-site/dashboard' %} text-red-600  font-bold  {% endif %} "> Dashboard</a>
                     </li>
                     <li class="mb-4">
                         <a href="/admin-site/users" class="hover:text-red-600  {% if request.path == '/admin-site/users' %}  text-red-600 font-semibold  px-2  {% endif %}">Users</a>
@@ -28,33 +31,56 @@
                     </li>
                 </ul>
             </nav>
-            <div>
-                <a href="#" class="text-red-600 hover:text-red-600">Logout</a>
+            <div  onclick="showPopUp()" class="cursor-pointer py-2 w-full text-red-500 font-semibold hover:text-red-400 text-center">
+                <button  class="">Logout</button>
             </div>
         
     </div>
-    <div id="main-content" class="ml-[190px] p-6">
+    <div  id="confirm-popup"
+      class="fixed  hidden inset-0 z-50  min-h-full overflow-y-auto overflow-x-hidden flex items-center justify-center">
+      <div aria-hidden="true" class="fixed inset-0 bg-black opacity-30"></div>
+      <div class="bg-gray-800 fixed  border border-gray-200 rounded-lg  shadow-2xl h-fit w-fit p-6 ">
+        <h1 class="text-lg text-white">Are you sure you would like to <span class="text-red-600 ">logout</span>?</h1>
+        <div class=" flex items-center justify-around  py-2 mt-4">
+          <button onclick="cancelLogout()"
+            class=" rounded text-white px-6 hover:bg-gray-900 py-2 bg-gray-700 hover:text-green-600 ">Cancel
+          </button>
+          <a href="{% url 'logout' %}" class="bg-red-600 text-white rounded py-2  px-6 hover:bg-red-700   ">Yes</a>
+        </div>
+      </div>
+    </div>
+    <div id="main-content" class="ml-[160px] p-6 bg-gray-800 h-full ">
         {% block content %}
         <div>
-            <h2 class="text-2xl font-bold text-black mb-6">Dashboard</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white shadow-md rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-black mb-4">Users</h3>
-                    <p class="text-red-600">Total Users: 123</p>
+            <div class="text-2xl font-bold text-center text-gray-200 flex gap-1 w-fit mx-auto items-center  mb-6"> <img src="/static/images/dashboard-light.svg" width="32" alt=""> Dashboard </div>
+            <!-- dashboard content start -->
+                <div class="flex gap-6 items-center justify-center flex-wrap">
+                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/6 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
+                        <div class="text-3xl text-red-600 w-fit  font-bold"> {{ org_count }} </div>
+                        <div class="text-base"> Total organization(s)</div> 
+                        <div> <a href="#" class="flex gap-1 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details <img src="/static/images/arrow-right-circle.svg" width="16" alt=""></a></div>
+                    </div>
+                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/6 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
+                        <div class="text-3xl text-red-600 w-fit  font-bold"> {{ total_user_count }} </div>
+                        <div class="text-base"> Total user(s)</div> 
+                        <div> <a href="{% url 'admin-users' %}" class="flex gap-1 hover:text-blue-500 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details <img src="/static/images/arrow-right-circle.svg" width="16" alt=""></a></div>
+                    </div>
                 </div>
-                <div class="bg-white shadow-md rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-black mb-4">Active Sessions</h3>
-                    <p class="text-red-600">Active Now: 45</p>
-                </div>
-                <div class="bg-white shadow-md rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-black mb-4">Reports</h3>
-                    <p class="text-red-600">New Reports: 8</p>
-                </div>
-            </div>
+            <!-- dashboard content end -->
         </div>
         {% endblock content %}
     </div>
     <script>
+        function showPopUp() {
+            let element = document.getElementById('confirm-popup');
+            element.classList.remove('hidden')
+            element.classList.add('block');
+        }
+        function cancelLogout() {
+            let element = document.getElementById('confirm-popup');
+            element.classList.remove('block')
+            element.classList.add('hidden');
+        }
         document.addEventListener("DOMContentLoaded", function () {
             const links = document.querySelectorAll(".nav-link");
 

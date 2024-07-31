@@ -14,12 +14,12 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-slate-600">
     <div class="min-h-screen flex flex-col mx-auto items-center justify-center">
         <div>
             <img src="/static/images/logo-green1.png" width="300" alt="">
         </div>
-        <div class="text-2xl  font-bold text-black mb-8">Admin <span class="text-red-600">Login</span></div>
+        <div class="text-2xl  font-bold text-white mb-8">Admin <span class="text-red-600">Login</span></div>
         <div class="flex flex-col items-center justify-center w-full mx-auto px-3 py-12">
            <div class="flex w-full flex-col md:flex-row justify-center items-center gap-8">
             <div class="md:border-r-4 md:py-8 px-4  border-red-600 ">
@@ -47,12 +47,12 @@
                 {% endif %}
                 
                 <div class="mb-4 w-full">
-                    <label class="block text-red-600 text-sm font-bold mb-2" for="username">Email</label>
-                    <input  required maxlength="50" class="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:border-gray-400  focus:outline-none focus:shadow-outline" id="email" name="email" type="email" placeholder="eg. admin@example.com">
+                    <label class="block text-white  text-sm font-bold mb-2" for="username">Email</label>
+                    <input required maxlength="50" class="bg-gray-200  shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:border-red-400  focus:outline-none focus:shadow-outline" id="email" name="email" type="email" value="{{ post_data.email|default:'' }}" placeholder="eg. admin@example.com">
                 </div>
                 <div class="mb-6">
-                    <label class="block text-red-600 text-sm font-bold mb-2" for="password">Password</label>
-                    <input required maxlength="20" class="shadow appearance-none border-2 focus:border-gray-400 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" name="password" type="password" placeholder="**********">
+                    <label class="block text-white text-sm font-bold mb-2" for="password">Password</label>
+                    <input required maxlength="20" class="bg-gray-200 shadow appearance-none border-2 focus:border-gray-400 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" name="password" type="password" placeholder="**********">
                 </div>
                 <div class="flex items-center justify-between">
                     <button type="submit" class="hover:bg-red-500 transition-all duration-300 ease-in-out active:scale-105 transform bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Sign In</button>

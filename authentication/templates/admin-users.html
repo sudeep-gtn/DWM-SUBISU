@@ -3,10 +3,186 @@
 {% block title %} Users | admin {% endblock title %} 
 {% block content %}
 <div>
-    <h2 class="text-2xl font-bold text-black mb-6">Users</h2>
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-black mb-4">User List</h3>
-        <!-- Add user details here -->
+
+    <div class="text-xl w-fit mx-auto flex gap-1 items-center font-bold text-gray-200"> <img src="/static/images/user-gray.svg" width="24" height="24" alt=""> Application <span class="text-red-600">Users</span> </div>
+    <div class="text-gray-400  mb-4  w-fit text-sm text-center mx-auto "> Here you can see all the associated user within the application  </div>
+
+
+    <div class="text-gray-200">
+      
+        
+        <!-- <div class="bg-gray-700 p-6 mb-4 w-fit border border-gray-500 items-center justify-between  rounded-lg shadow-md">
+            {% if error %}
+            <div class="bg-red-500 w-fit text-white px-6 py-1 text-sm rounded mb-4">Error : {{ error }}</div>
+            {% endif %}
+            <div class="flex gap-1 mb-3 font-semibold items-center text-gray-200"> <img src="/static/images/assign-user-svgrepo.svg" width="20"  alt=""> Assign Organizational admins  </div>
+            <form method="post" class="flex flex-col items-center  gap-4 lg:flex-row">
+                {% csrf_token %}
+                <div class="mb-4 w-full lg:w-fit">
+                    <label for="organization" class="block text-sm font-medium text-gray-400">Select Organization</label>
+                    <select id="organization" name="organization" class=" block w-full bg-gray-600 text-gray-200 border border-gray-600 rounded-md shadow-sm py-1 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" selected> Select organization </option>
+                        {% for org in organizations %}
+                            <option value="{{ org.id }}">{{ org.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4 w-full lg:w-fit">
+                    <label for="user" class="block text-sm font-medium text-gray-400">Select User</label>
+                    <select id="user" name="user" class=" block w-full bg-gray-600 text-gray-200 border border-gray-600 rounded-md shadow-sm py-1 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" selected>Select user </option>
+                        {% for user in normal_users %}
+                            <option value="{{ user.id }}">{{ user.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 w-fit h-fit px-4 rounded ">
+                    Assign org admin
+                </button>
+            </form>
+        </div> -->
+    </div>
+
+
+
+    <!-- user infos table -->
+     <div class="text-gray-100 font-semibold mb-2 w-fit "> List of the users within application  </div>
+     {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                {% if message.tags == "success" %}
+                    <div class="bg-green-500 text-white px-3 py-1 rounded-md w-fit">Success : {{ message }}</div>
+                {% elif message.tags == "error" %}
+                    <div class="bg-red-500 text-white px-3 py-1 rounded-md w-fit">Error : {{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="mb-8">
+        <div class="text-lg text-gray-400 font-bold flex gap-2  items-center mb-2 "> <img src="/static/images/user.png" width="16" height="16" alt=""> Superadmins <div class="bg-gray-400 font-semibold text-white px-2 rounded-2xl text-center text-sm mx-2"> {{ superadmin_counts }} </div></div>
+        <div class="overflow-x-auto w-full  rounded">
+            <table class="min-w-full bg-gray-500">
+                <thead class="text-base">
+                    <tr>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Email</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Date joined </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
+
+                    </tr>
+                </thead>
+                <tbody class="text-base">
+                    {% for user in superadmins %}
+                        <tr class="bg-gray-600 text-gray-300">
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.full_name }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.email }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.date_joined }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <div class="flex items-center">
+                                        <select name="role" class="bg-gray-600 text-gray-200 border border-gray-500 text-sm rounded-md shadow-sm py-1 px-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="normal_user" {% if not user.is_org_admin and not user.is_superadmin %}selected{% endif %}>Normal User</option>
+                                            <option value="org_admin" {% if user.is_org_admin %}selected{% endif %}>Organizational Admin</option>
+                                            <option value="superuser" {% if user.is_superadmin %}selected{% endif %}>Superuser</option>
+                                        </select>
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold  px-2 rounded ml-2">Change</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-lg font-bold text-gray-400 flex gap-1 items-center mb-2">  <img src="/static/images/user.png" width="16" height="16" alt=""> Organizational Admins <div class="bg-gray-400 font-semibold text-white px-2 rounded-2xl text-center text-sm mx-2 "> {{ org_admin_count }} </div> </h2>
+        <div class="overflow-x-auto w-full rounded">
+            <table class="min-w-full bg-gray-500">
+                <thead class="text-base">
+                    <tr>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Email</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Joined date </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
+                    </tr>
+                </thead>
+                <tbody class="text-base">
+                    {% for user in org_admins %}
+                        <tr class="bg-gray-600 text-gray-300">
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.full_name }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.email }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600"> {{ user.date_joined }} </td>
+                            <td class="px-2 py-1 border-b border-gray-600">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <div class="flex items-center">
+                                        <select name="role" class="bg-gray-600 text-gray-200 border border-gray-500 text-sm rounded-md shadow-sm py-1 px-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="normal_user" {% if not user.is_org_admin and not user.is_superadmin %}selected{% endif %}>Normal User</option>
+                                            <option value="org_admin" {% if user.is_org_admin %}selected{% endif %}>Organizational Admin</option>
+                                            <option value="superuser" {% if user.is_superadmin %}selected{% endif %}>Superuser</option>
+                                        </select>
+                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-2 rounded ml-2">Change</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-lg font-bold text-gray-400 mb-2 flex items-center gap-1 ">  <img src="/static/images/user-gray.svg" class="" width="18" height="16" alt=""> Other Users <div class="bg-gray-400 font-semibold text-white px-2 rounded-2xl text-center text-sm mx-2 "> {{ normal_user_counts }} </div> </h2>
+        <div class="overflow-x-auto w-full rounded">
+            <table class="min-w-full bg-gray-500">
+                <thead class="text-base">
+                    <tr>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Email</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Joined date  </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Verified email </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Active status </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Role</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
+
+                    </tr>
+                </thead>
+                <tbody class="text-base">
+                    {% for user in normal_users %}
+                        <tr class="bg-gray-600 text-gray-300">
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.full_name }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.email }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">{{ user.date_joined }}</td>
+                            <td class="px-2 py-1 border-b border-gray-600">{% if user.is_email_verified %} <span class="text-white bg-green-600 px-2 rounded w-fit  text-sm"> verified</span> {% else %} <span class="text-white bg-red-600 px-2 rounded w-fit  text-sm">unverified</span> {% endif %}</td>
+                            <td class="px-2 py-1 border-b border-gray-600 text-gray-100 text-sm">{% if user.is_active %} <span class="bg-green-600 px-2 rounded-md text-sm flex items-center justify-center w-fit">Active</span> {% else %} <span class="bg-red-600 px-2 rounded-md text-sm flex items-center justify-center w-fit">Inactive</span> {% endif %}</td>
+                            <td class="px-2 py-1 border-b border-gray-600 "><span class="bg-orange-600 px-2 text-white flex items-center justify-center rounded w-fit text-sm">{{ user.is_org_admin|yesno:"Organizational Admin,Normal User" }}</span></td>
+                            <td class="px-2 py-1 border-b border-gray-600">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <div class="flex items-center">
+                                        <select name="role" class="bg-gray-600 text-gray-200 border border-gray-500 rounded-md shadow-sm text-sm py-1 px-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="normal_user" {% if not user.is_org_admin and not user.is_superadmin %}selected{% endif %}>Normal User</option>
+                                            <option value="org_admin" {% if user.is_org_admin %}selected{% endif %}>Organizational Admin</option>
+                                            <option value="superuser" {% if user.is_superadmin %}selected{% endif %}>Superuser</option>
+                                        </select>
+                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-2 rounded ml-2">Change</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock content %}

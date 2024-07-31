@@ -373,7 +373,7 @@ class BlackMarketView(LoginRequiredMixin, View):
     
     def post(self, request):
         if not request.user.is_superuser:
-            return HttpResponse("404 Forbidden", status=403)
+            return HttpResponse("403 Forbidden", status=403)
         bm_source = escape(request.POST.get("source")).strip()
         stealer_log_preview = escape(request.POST.get("log_preview")).strip()
         bm_related_assets = escape(request.POST.get('related_assets')).strip()
