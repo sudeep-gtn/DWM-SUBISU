@@ -18,7 +18,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .decorators import superadmin_required, org_admin_required
-from xhtml2pdf
+from xhtml2pdf2323
 
 class RegisterView(View):
     def get(self, request):
