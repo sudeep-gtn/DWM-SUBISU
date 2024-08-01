@@ -90,18 +90,18 @@ WSGI_APPLICATION = 'DWmonitoring.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgres://postgres:postgres@db:5432/postgres'
-#     )
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgres://postgres:postgres@db:5432/postgres'
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -203,4 +203,4 @@ DEFAULT_FROM_EMAIL='sudeepbogati@google.com'
 import os
 # ADMIN_EMAIL = 'sudeep.bogati@greentick.com.np'
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
-ORG_ADMIN_EMAIL = "shyam.bista@greentick.com.np"
+ORG_ADMIN_EMAIL = "sulav@gtn.com.np"
