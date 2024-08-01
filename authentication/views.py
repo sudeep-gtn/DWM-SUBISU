@@ -88,8 +88,11 @@ class LoginView(View):
 
         user = authenticate(request, email=email, password=password)
         if user is not None:
-            login(request, user)
-            return redirect("overview")
+            request.session['login_email'] = email
+            
+            send_otp_email(user)
+            
+            return redirect("verify-login")
         else:
             return render(request, "login.html", {"error": "Invalid Password"})
 
@@ -129,6 +132,29 @@ class VerifyOTP(View):
         else:
             return HttpResponse("No registered email found in session")
 
+
+
+class VerifyOTPForLogin(View):
+    def get(self,request):
+        return render(request, "verify-otp.html")
+    
+    def post(self, request):
+        otp = request.POST.get("otp".strip())
+        email = request.session.get("login_email")
+        if email:
+            try:
+                user = CustomUser.objects.get(email=email)
+                if is_otp_valid(user, otp):
+                    user.is_email_verified = True
+                    user.save()
+                    login(request, user)
+                    return redirect('overview') 
+                else:
+                    return render(request, 'verify-otp.html', {"error": "Invalid OTP. Please try again."})
+            except CustomUser.DoesNotExist:
+                return HttpResponse("User does not exist")
+        else:
+            return HttpResponse("No login email found in session")
 
 class ProfileView(LoginRequiredMixin, View):
     login_url = "login"

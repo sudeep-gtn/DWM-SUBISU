@@ -203,4 +203,4 @@ DEFAULT_FROM_EMAIL='sudeepbogati@google.com'
 import os
 # ADMIN_EMAIL = 'sudeep.bogati@greentick.com.np'
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
-ORG_ADMIN_EMAIL = "shyam.bista@greentick.com.np"
+ORG_ADMIN_EMAIL = "sulav@gtn.com.np"
