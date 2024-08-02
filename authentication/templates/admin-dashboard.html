@@ -31,8 +31,25 @@
                     </li>
                 </ul>
             </nav>
-            <div  onclick="showPopUp()" class="cursor-pointer py-2 w-full text-red-500 font-semibold hover:text-red-400 text-center">
-                <button  class="">Logout</button>
+            <div class="cursor-pointer py-2 w-full text-gray-500 flex items-center justify-center font-semibold hover:text-gray-100 text-center">
+                <a  href="{% url 'overview' %}" class="flex items-center justify-center">  Home <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>  </a>
+            </div>
+            <div  onclick="showPopUp()" class="cursor-pointer flex items-center justify-center py-2 w-full text-red-500 font-semibold hover:text-red-400 text-center">
+                <button  class="flex  items-center gap-1"> 
+                    <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    transform="matrix(-1, 0, 0, 1, 0, 0)">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                    <path
+                        d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    <path d="M15 12L2 12M2 12L5.5 9M2 12L5.5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                    </g>
+              </svg> Logout </button>
             </div>
         
     </div>
@@ -55,15 +72,19 @@
             <div class="text-2xl font-bold text-center text-gray-200 flex gap-1 w-fit mx-auto items-center  mb-6"> <img src="/static/images/dashboard-light.svg" width="32" alt=""> Dashboard </div>
             <!-- dashboard content start -->
                 <div class="flex gap-6 items-center justify-center flex-wrap">
-                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/6 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
+                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/4 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
                         <div class="text-3xl text-red-600 w-fit  font-bold"> {{ org_count }} </div>
                         <div class="text-base"> Total organization(s)</div> 
                         <div> <a href="#" class="flex gap-1 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details <img src="/static/images/arrow-right-circle.svg" width="16" alt=""></a></div>
                     </div>
-                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/6 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
+                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/4 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
                         <div class="text-3xl text-red-600 w-fit  font-bold"> {{ total_user_count }} </div>
                         <div class="text-base"> Total user(s)</div> 
-                        <div> <a href="{% url 'admin-users' %}" class="flex gap-1 hover:text-blue-500 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details <img src="/static/images/arrow-right-circle.svg" width="16" alt=""></a></div>
+                        <div> <a href="{% url 'admin-users' %}" class="flex hover:text-blue-500 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details 
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                        </a></div>
                     </div>
                 </div>
             <!-- dashboard content end -->

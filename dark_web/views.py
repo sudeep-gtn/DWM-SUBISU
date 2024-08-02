@@ -855,12 +855,11 @@ class GenerateReportView(View):
         """
         Convert HTML URIs to absolute system paths so xhtml2pdf can access those resources.
         """
-        # Use Django's staticfiles finders to locate the file
-        sUrl = settings.STATIC_URL                # Typically /static/
-        sRoot = settings.STATIC_ROOT          # Typically /home/userX/project_static/
-        mUrl = settings.MEDIA_URL             # Typically /media/
-        mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
-        bRoot = settings.BASE_DIR              # Project's base directory
+        sUrl = settings.STATIC_URL
+        sRoot = settings.STATIC_ROOT
+        mUrl = settings.MEDIA_URL  
+        mRoot = settings.MEDIA_ROOT
+        bRoot = settings.BASE_DIR              
         if uri.startswith(mUrl):
             path = os.path.join(mRoot, uri.replace(mUrl, ""))
         elif uri.startswith(sUrl):
@@ -868,7 +867,6 @@ class GenerateReportView(View):
         else:
             return os.path.join(bRoot, '../', uri)
 
-        # make sure that file exists
         if not os.path.isfile(path):
             raise Exception(
                 'media URI must start with %s or %s' % (sUrl, mUrl)
@@ -1190,9 +1188,19 @@ class AllTickets(LoginRequiredMixin, View):
 class AddCommentView(LoginRequiredMixin, View):
     def post(self, request, pk):
         ticket = get_object_or_404(Ticket, pk=pk)
-        comment_text = request.POST.get('comment')
+        comment_text = request.POST.get('comment').strip()
+        image_file = request.FILES.get('image')
+
+        if image_file:
+            print(f"Image File: {image_file}")
+
         if comment_text:
-            Comment.objects.create(ticket=ticket, author=request.user, text=comment_text)
+            Comment.objects.create(
+                ticket=ticket,
+                author=request.user, 
+                text=comment_text,
+                image= image_file
+            )
         return redirect('ticket_details', pk=pk)
 
 

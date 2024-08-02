@@ -62,24 +62,24 @@
     {% endif %}
     <div class="mb-8">
         <div class="text-lg text-gray-400 font-bold flex gap-2  items-center mb-2 "> <img src="/static/images/user.png" width="16" height="16" alt=""> Superadmins <div class="bg-gray-400 font-semibold text-white px-2 rounded-2xl text-center text-sm mx-2"> {{ superadmin_counts }} </div></div>
-        <div class="overflow-x-auto w-full  rounded">
-            <table class="min-w-full bg-gray-500">
-                <thead class="text-base">
+        <div class="overflow-x-auto w-full  rounded border-2 border-gray-600">
+            <table class="min-w-full bg-gray-700">
+                <thead class="text-base ">
                     <tr>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Email</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Date joined </th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Email</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Date joined </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
 
                     </tr>
                 </thead>
                 <tbody class="text-base">
                     {% for user in superadmins %}
-                        <tr class="bg-gray-600 text-gray-300">
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.full_name }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.email }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.date_joined }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">
+                        <tr class="bg-gray-700 text-gray-300">
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.full_name }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.email }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.date_joined }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="user_id" value="{{ user.id }}">
@@ -102,23 +102,23 @@
 
     <div class="mb-8">
         <h2 class="text-lg font-bold text-gray-400 flex gap-1 items-center mb-2">  <img src="/static/images/user.png" width="16" height="16" alt=""> Organizational Admins <div class="bg-gray-400 font-semibold text-white px-2 rounded-2xl text-center text-sm mx-2 "> {{ org_admin_count }} </div> </h2>
-        <div class="overflow-x-auto w-full rounded">
-            <table class="min-w-full bg-gray-500">
+        <div class="overflow-x-auto w-full rounded border-2 border-gray-600">
+            <table class="min-w-full bg-gray-700">
                 <thead class="text-base">
                     <tr>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Email</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Joined date </th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Email</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider"> Joined date </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-400 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
                     </tr>
                 </thead>
                 <tbody class="text-base">
                     {% for user in org_admins %}
-                        <tr class="bg-gray-600 text-gray-300">
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.full_name }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.email }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600"> {{ user.date_joined }} </td>
-                            <td class="px-2 py-1 border-b border-gray-600">
+                        <tr class="bg-gray-700 text-gray-300">
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.full_name }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.email }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500"> {{ user.date_joined }} </td>
+                            <td class="px-2 py-1 border-b border-gray-500">
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="user_id" value="{{ user.id }}">
@@ -141,30 +141,30 @@
 
     <div class="mb-8">
         <h2 class="text-lg font-bold text-gray-400 mb-2 flex items-center gap-1 ">  <img src="/static/images/user-gray.svg" class="" width="18" height="16" alt=""> Other Users <div class="bg-gray-400 font-semibold text-white px-2 rounded-2xl text-center text-sm mx-2 "> {{ normal_user_counts }} </div> </h2>
-        <div class="overflow-x-auto w-full rounded">
-            <table class="min-w-full bg-gray-500">
+        <div class="overflow-x-auto w-full rounded border-2 border-gray-600">
+            <table class="min-w-full bg-gray-700">
                 <thead class="text-base">
                     <tr>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Email</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Joined date  </th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Verified email </th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider"> Active status </th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Role</th>
-                        <th class="px-2 py-2 border-b-2 border-gray-600 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider">Full Name</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider">Email</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider"> Joined date  </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider"> Verified email </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider"> Active status </th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider">Role</th>
+                        <th class="px-2 py-2 border-b-2 border-gray-500 text-left leading-4 text-gray-200 tracking-wider">Change Role</th>
 
                     </tr>
                 </thead>
                 <tbody class="text-base">
                     {% for user in normal_users %}
-                        <tr class="bg-gray-600 text-gray-300">
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.full_name }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.email }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">{{ user.date_joined }}</td>
-                            <td class="px-2 py-1 border-b border-gray-600">{% if user.is_email_verified %} <span class="text-white bg-green-600 px-2 rounded w-fit  text-sm"> verified</span> {% else %} <span class="text-white bg-red-600 px-2 rounded w-fit  text-sm">unverified</span> {% endif %}</td>
-                            <td class="px-2 py-1 border-b border-gray-600 text-gray-100 text-sm">{% if user.is_active %} <span class="bg-green-600 px-2 rounded-md text-sm flex items-center justify-center w-fit">Active</span> {% else %} <span class="bg-red-600 px-2 rounded-md text-sm flex items-center justify-center w-fit">Inactive</span> {% endif %}</td>
-                            <td class="px-2 py-1 border-b border-gray-600 "><span class="bg-orange-600 px-2 text-white flex items-center justify-center rounded w-fit text-sm">{{ user.is_org_admin|yesno:"Organizational Admin,Normal User" }}</span></td>
-                            <td class="px-2 py-1 border-b border-gray-600">
+                        <tr class="bg-gray-700 text-gray-300">
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.full_name }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.email }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">{{ user.date_joined }}</td>
+                            <td class="px-2 py-1 border-b border-gray-500">{% if user.is_email_verified %} <span class="text-white bg-green-600 px-2 rounded w-fit  text-sm"> verified</span> {% else %} <span class="text-white bg-red-600 px-2 rounded w-fit  text-sm">unverified</span> {% endif %}</td>
+                            <td class="px-2 py-1 border-b border-gray-500 text-gray-100 text-sm">{% if user.is_active %} <span class="bg-green-600 px-2 rounded-md text-sm flex items-center justify-center w-fit">Active</span> {% else %} <span class="bg-red-600 px-2 rounded-md text-sm flex items-center justify-center w-fit">Inactive</span> {% endif %}</td>
+                            <td class="px-2 py-1 border-b border-gray-500 "><span class="bg-orange-600 px-2 text-white flex items-center justify-center rounded w-fit text-sm">{{ user.is_org_admin|yesno:"Organizational Admin,Normal User" }}</span></td>
+                            <td class="px-2 py-1 border-b border-gray-500">
                                 <form method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="user_id" value="{{ user.id }}">
