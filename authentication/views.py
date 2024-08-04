@@ -339,7 +339,9 @@ class AdminUsers(View):
             new_role = request.POST.get('role')
 
 
-            if user.is_superadmin and CustomUser.objects.filter(is_superadmin=True).count() == 1:
+            if request.user.id == user.id:
+                messages.error(request, "You cannot change your own role.")
+            elif user.is_superadmin and CustomUser.objects.filter(is_superadmin=True).count() == 1:
                 messages.error(request, "There must be at least one superuser.")
             else:
                 if new_role in ['org_admin', 'superuser'] and not user.is_email_verified:
