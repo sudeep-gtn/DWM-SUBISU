@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import CustomUser, UserLoginHistory,Organization
+from dark_web.models import Notification, Domain, PIIExposure, StealerLogs, BlackMarket
 from django.contrib.auth import (
     authenticate, login, logout, update_session_auth_hash
 )
@@ -303,10 +304,15 @@ class AdminDashboard(View):
         organizations = Organization.objects.all()
         organization_count = organizations.count()
         total_user_count = CustomUser.objects.all().count()
+
+        notifications = Notification.objects.all().order_by('-timestamp')
+        notifications_length = len(notifications)
         context = {
             "organizations" : organizations,
             "org_count" : organization_count,
-            "total_user_count" : total_user_count 
+            "total_user_count" : total_user_count ,
+            "notifications" : notifications,
+            "notification_count": notifications_length
         }
         return render(request, "admin-dashboard.html", context)
     
@@ -362,3 +368,109 @@ class AdminUsers(View):
             
             user.save()
             return redirect('admin-users') 
+
+
+@method_decorator(superadmin_required, name='dispatch')
+class AdminDomain(View):
+    def get(self, request):
+        domains = Domain.objects.all()
+        domain_length = len(domains)
+        all_domains = [domain.name for domain in domains]
+        unique_domain = set(all_domains)
+        unique_domain_length = len(unique_domain)
+
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+    
+        if start_date :
+            domains = domains.filter(breach_date__gte=start_date)
+        if end_date : 
+            domains = domains.filter(breach_date__lte=end_date)
+        context = {
+            'domains': domains, 
+            'domain_length': domain_length, 
+            'unique_domain_length': unique_domain_length, 
+            'unique_domains': unique_domain
+        }
+        return render(request,"admin-domain.html", context=context)
+    def post(self, request):
+        if not request.user.is_superuser:
+            return HttpResponse("403 Forbidden!", status=403)
+        domain_id = request.POST.get('domain_id', '').strip()
+        domain_name = request.POST.get('domain_name', '').strip()
+        domain_ip = request.POST.get('domain_ip', '').strip()
+        breach_date = request.POST.get('breach_date', '').strip()
+        source_ip = request.POST.get('source_ip', '').strip()
+        source_domain = request.POST.get('source_domain', '').strip()
+
+        errors = []
+
+        # Validation
+        if not domain_name:
+            errors.append("Domain name is required.")
+        elif len(domain_name) > 255:
+            errors.append("Domain name must be at most 255 characters long.")
+
+        if not domain_ip:
+            errors.append("Domain IP is required.")
+        elif not re.match(r'^(\d{1,3}\.){3}\d{1,3}$', domain_ip):
+            errors.append("Invalid domain IP format.")
+
+        if not breach_date:
+            errors.append("Breach date is required.")
+        # Add additional date format validation if needed
+
+        if not source_ip:
+            errors.append("Source IP is required.")
+        elif not re.match(r'^(\d{1,3}\.){3}\d{1,3}$', source_ip):
+            errors.append("Invalid source IP format.")
+
+        if not source_domain:
+            errors.append("Source domain is required.")
+        elif len(source_domain) > 255:
+            errors.append("Source domain must be at most 255 characters long.")
+
+        if errors:
+            return render(request, 'domain.html', {'errors': errors,'post_data': request.POST})
+
+
+        if domain_id:
+            # Update existing domain record
+            try:
+                domain = Domain.objects.get(id=domain_id)
+                domain.name = domain_name
+                domain.domain_ip = domain_ip
+                domain.breach_date = breach_date
+                domain.source_ip = source_ip
+                domain.source_domain = source_domain
+                domain.save()
+            except Domain.DoesNotExist:
+                return HttpResponse("Domain not found", status=404)
+        else:
+            # Create new domain record
+            new_domain_record = Domain(
+                name=domain_name,
+                domain_ip=domain_ip,
+                source_domain=source_domain,
+                source_ip=source_ip,
+                breach_date=breach_date
+            )
+            new_domain_record.save()
+
+        return redirect('admin-domain')
+    
+    
+@method_decorator(superadmin_required, name='dispatch')
+class AdminPII(View):
+    def get(self, request):
+        return render(request,"admin-pii.html")
+    
+@method_decorator(superadmin_required, name='dispatch')
+class AdminBlackMarket(View):
+    def get(self, request):
+        return render(request,"admin-black-market.html" )
+
+@method_decorator(superadmin_required, name='dispatch')
+class AdminStealerLogs(View):
+    def get(self, request):
+        return render(request, "admin-stealer-logs.html")

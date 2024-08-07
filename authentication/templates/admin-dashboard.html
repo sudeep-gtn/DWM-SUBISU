@@ -6,7 +6,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <title>{% block title %} Dashboard | Admin {% endblock title %}</title>
+    <style>
+         ::-webkit-scrollbar {
+        width: 12px;
+        }
 
+        ::-webkit-scrollbar-track {
+        background: #686868;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background-color: #dbdbdb;
+        border-radius: 10px;
+        border: 4px solid #666666;
+        }
+    </style>
 </head>
 <body class="bg-gray-800 ">
     <div id="sidebar"
@@ -15,19 +29,25 @@
                 <div class="text-xl p font-extrabold ">Admin <span class="text-red-600">Panel</span></div>
                 <div class="mb-4"> <img src="https://gkavach.com/storage/2023/02/greentick.png" width="80" height="120" alt=""> </div>
             </div>
-            <nav class="flex-1 px-4 mt-4  text-center">
+            <nav class="flex-1 px-4 mt-4 text-gray-300 text-center">
                 <ul>
                     <li class="mb-4">
-                        <a href="/admin-site/dashboard" class="flex gap-1 hover:text-red-600  {% if request.path == '/admin-site/dashboard' %} text-red-600  font-bold  {% endif %} "> Dashboard</a>
+                        <a href="{% url 'admin-dashboard' %}" class=" hover:text-red-600  {% if request.path == '/admin-site/dashboard' %} text-red-600 font-bold  px-2 {% endif %} "> Dashboard</a>
                     </li>
                     <li class="mb-4">
-                        <a href="/admin-site/users" class="hover:text-red-600  {% if request.path == '/admin-site/users' %}  text-red-600 font-semibold  px-2  {% endif %}">Users</a>
+                        <a href="{% url 'admin-users' %}" class="hover:text-red-600  {% if request.path == '/admin-site/users' %}  text-red-600 font-bold  px-2  {% endif %}"> Users </a>
                     </li>
                     <li class="mb-4">
-                        <a href="#" class=" hover:text-red-600  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Settings</a>
+                        <a href="{% url 'admin-domain' %}" class=" hover:text-red-600  {% if request.path == '/admin-site/compromised/domain' %} text-red-600  font-bold  px-2  {% endif %}"> Domain leaks </a>
                     </li>
                     <li class="mb-4">
-                        <a href="#" class=" hover:text-red-600  {% if request.path == '/' %} border-l-4 text-red-600 font-semibold border-red-600 px-2  {% endif %}">Reports</a>
+                        <a href="{% url 'admin-stealer-logs' %}" class=" hover:text-red-600  {% if request.path == '/admin-site/compromised/stealer-logs' %} text-red-600 font-bold  px-2  {% endif %}"> Stealer logs  </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="{% url 'admin-black-market' %}" class=" hover:text-red-600  {% if request.path == '/admin-site/compromised/black-market' %}text-red-600 font-bold  px-2  {% endif %}"> Black market  </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="{% url 'admin-pii' %}" class=" hover:text-red-600  {% if request.path == '/admin-site/compromised/pii' %}  font-bold text-red-600 px-2  {% endif %}"> PII Exposures  </a>
                     </li>
                 </ul>
             </nav>
@@ -69,24 +89,117 @@
     <div id="main-content" class="ml-[160px] p-6 bg-gray-800 h-full ">
         {% block content %}
         <div>
-            <div class="text-2xl font-bold text-center text-gray-200 flex gap-1 w-fit mx-auto items-center  mb-6"> <img src="/static/images/dashboard-light.svg" width="32" alt=""> Dashboard </div>
+            <div class="text-2xl font-bold text-center text-gray-200 flex gap-1 w-fit mx-auto items-center "> <img src="/static/images/dashboard-light.svg" width="32" alt=""> Dashboard </div>
+            <div class="mb-6 text-center text-gray-400 text-sm"> A brief overview of all data around information including users, compromised data . </div>
             <!-- dashboard content start -->
-                <div class="flex gap-6 items-center justify-center flex-wrap">
-                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/4 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
-                        <div class="text-3xl text-red-600 w-fit  font-bold"> {{ org_count }} </div>
-                        <div class="text-base"> Total organization(s)</div> 
-                        <div> <a href="#" class="flex gap-1 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details <img src="/static/images/arrow-right-circle.svg" width="16" alt=""></a></div>
+                <div class="">
+                   
+
+                    <div class="flex justify-center  w-full">
+                        <div class=" w-3/4 px-4">
+                            <div class="text-gray-400 flex gap-1 font-semibold text-xl my-2"> <img class="mt-1" src="/static/images/compromised.svg" width="20" alt=""> Compromised data </div>
+                            <div class="flex gap-4  w-full">
+                                <div class="text-gray-200 bg-slate-600 hover:border-red-400 shadow-lg shadow-slate-600/20 px-4 py-2 rounded  border border-gray-500 w-1/4">
+                                    <div class="text-4xl font-bold text-red-500"> 4 </div>
+                                    <div class="">  Domain Leaks  </div>
+                                    <a href="#" class="font-normal flex items-center w-fit  text-sm underline text-gray-400 hover:text-white "> 
+                                        See details 
+                                        <svg class="mt-1 " width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg> 
+                                    </a>
+                                </div>
+                                <div class="text-gray-200 bg-slate-600 hover:border-red-400 shadow-lg shadow-slate-600/20 px-4 py-2 rounded  border border-gray-500 w-1/4">
+                                    <div class="text-4xl font-bold text-red-500"> 4 </div>
+                                    <div class=""> Black Markets  </div>
+                                    <a href="#" class="font-normal w-fit flex items-center text-sm underline text-gray-400 hover:text-white "> 
+                                        See details 
+                                        <svg class="mt-1 " width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg> 
+                                    </a>
+                                </div>
+                                <div class="text-gray-200 bg-slate-600 hover:border-red-400 shadow-lg shadow-slate-600/20 px-4 py-2 rounded  border border-gray-500 w-1/4">
+                                    <div class="text-4xl font-bold text-red-500"> 4 </div>
+                                    <div class=""> Stealer Logs   </div>
+                                    <a href="#" class="font-normal w-fit flex items-center text-sm underline text-gray-400 hover:text-white "> 
+                                        See details 
+                                        <svg class="mt-1 " width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg> 
+                                    </a>
+                                </div>
+                                <div class="text-gray-200 bg-slate-600 hover:border-red-400 shadow-lg shadow-slate-600/20 px-4 py-2 rounded  border border-gray-500 w-1/4">
+                                    <div class="text-4xl font-bold text-red-500"> 4 </div>
+                                    <div class=""> PII Exposures   </div>
+                                    <a href="#" class="font-normal flex items-center text-sm underline text-gray-400 hover:text-white "> 
+                                        See details 
+                                        <svg class="mt-1 " width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg> 
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="text-xl flex items-center gap-1 mt-8 justify-center text-gray-400 w-fit  font-bold"> <img src="/static/images/user-gray.svg" width="24" height="24" alt=""> Users  <div class="bg-red-500 text-sm mt-1 ml-2 text-white px-2 rounded ">3</div></div>
+
+                            </div>
+                            <div class="bg-slate-600 mt-2 border border-gray-500 text-gray-200 w-2/5  px-4 py-1 rounded-lg ">
+                                <div class="flex justify-between items-center  mt-2 gap-4">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <span class="text-2xl text-red-400 font-bold"> 1 </span>
+                                        <span class="text-sm">superadmin(s) </span>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center"">
+                                        <span class="text-2xl font-bold">1</span>
+                                        <span class="text-sm">Org Admin(s) </span>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center"">
+                                        <span class="text-2xl font-bold">1</span>
+                                        <span class="text-sm"> Moderator(s) </span>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <a href="{% url 'admin-users' %}" class="flex hover:text-gray-100 items-center text-sm w-fit mt-2 mb-2 border-b border-gray-400 text-gray-400"> See details 
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+        
+                        </div>
+    
+                        <div class="w-1/3">
+                            <div class="text-gray-400 text-xl font-semibold flex gap-1 mb-4 w-fit mx-auto items-center" > <img class="mt-1" src="/static/images/notification-light.svg" width="24" alt=""> Recent Notifications </div>
+                            <div class="max-h-[600px] border-l-2 border-gray-500 overflow-y-scroll p-2 ">
+                                <ul class="flex flex-col items-center justify-center mx-auto ">
+                                    {% for notification in notifications %}
+                                    <li class="hover:bg-slate-600 border-b border-gray-500 group w-full flex flex-col px-2 py-1  mb-2">
+                                        <div class="group-hover:text-red-400 text-gray-200 text-sm">{{ notification.message }}</div>
+                                        <span class="text-gray-400 text-xs">{{ notification.timestamp }}</span>
+                                    </li>
+                                    {% empty %}
+                                    <li class="text-gray-600"> No notifications available.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-slate-600 border border-gray-400 text-gray-200 md:w-1/4 px-4 py-1 rounded-lg shadow-lg shadow-gray-400/20">
-                        <div class="text-3xl text-red-600 w-fit  font-bold"> {{ total_user_count }} </div>
-                        <div class="text-base"> Total user(s)</div> 
-                        <div> <a href="{% url 'admin-users' %}" class="flex hover:text-blue-500 items-center text-sm w-fit my-2 font-semibold border-b border-gray-400 text-gray-300"> See details 
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                        </a></div>
-                    </div>
+
+
+
+
+
+
+
+
+
+
+
                 </div>
+
             <!-- dashboard content end -->
         </div>
         {% endblock content %}

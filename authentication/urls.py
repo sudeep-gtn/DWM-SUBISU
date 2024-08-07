@@ -6,7 +6,8 @@ from .views import (
     TermsAndConditionsView,
     BrandProtectionView, EditNameView,
     ChangePasswordView, ContactPageView,
-    VerifyOTP, SendOTPFromProfile, NoPermissionView, AdminLogin,AdminDashboard,AdminUsers,VerifyOTPForLogin
+    VerifyOTP, SendOTPFromProfile, NoPermissionView, AdminLogin,AdminDashboard,AdminUsers,VerifyOTPForLogin,
+    AdminDomain, AdminBlackMarket, AdminPII , AdminStealerLogs
     )
 
 urlpatterns = [
@@ -31,6 +32,12 @@ urlpatterns = [
     path("admin-login", AdminLogin.as_view(), name="admin-login"),
     path("admin-site/dashboard",AdminDashboard.as_view(), name="admin-dashboard"),
     path("admin-site/users", AdminUsers.as_view(), name="admin-users"),
+
+    path("admin-site/compromised/domain",AdminDomain.as_view(),name="admin-domain" ),
+    path("admin-site/compromised/pii",AdminPII.as_view(),name="admin-pii" ),
+    path("admin-site/compromised/black-market",AdminBlackMarket.as_view(),name="admin-black-market" ),
+    path("admin-site/compromised/stealer-logs",AdminStealerLogs.as_view(),name="admin-stealer-logs" ),
+
 
 
     ]
